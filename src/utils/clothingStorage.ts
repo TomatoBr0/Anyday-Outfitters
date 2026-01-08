@@ -19,6 +19,26 @@ export const addClothingItem = (newItem: ClothingItem) => {
   localStorage.setItem(CLOTHING_STORAGE_KEY, JSON.stringify(updatedItems));
 };
 
+export const deleteClothingItem = (itemId: string) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  const currentItems = getClothingItems();
+  const updatedItems = currentItems.filter(item => item.id !== itemId);
+  localStorage.setItem(CLOTHING_STORAGE_KEY, JSON.stringify(updatedItems));
+};
+
+export const updateClothingItem = (updatedItem: ClothingItem) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  const currentItems = getClothingItems();
+  const updatedItems = currentItems.map(item =>
+    item.id === updatedItem.id ? updatedItem : item
+  );
+  localStorage.setItem(CLOTHING_STORAGE_KEY, JSON.stringify(updatedItems));
+};
+
 // This function can be used to initialize dummy data or clear storage if needed
 export const setClothingItems = (items: ClothingItem[]) => {
   if (typeof window === 'undefined') {

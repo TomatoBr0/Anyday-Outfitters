@@ -61,6 +61,7 @@ const AddClothingItem: React.FC = () => {
       userId: 'user1', // Placeholder user ID
       uploadedAt: new Date().toISOString(),
       isClean: true, // Default to clean when added
+      isFavorite: false, // Added missing isFavorite property
       ...formData,
       name: formData.name || 'Unnamed Item', // Ensure name is not empty
       imageUrl: formData.imageUrl || 'https://via.placeholder.com/150/CCCCCC/000000?text=No+Image', // Default image

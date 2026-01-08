@@ -13,6 +13,7 @@ export interface ClothingItem {
   isClean: boolean;
   lastWornDate?: string; // ISO date string
   uploadedAt: string; // ISO date string
+  isFavorite: boolean; // Added this property
 }
 
 export interface Outfit {
