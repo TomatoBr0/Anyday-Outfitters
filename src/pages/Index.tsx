@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Outfit } from '@/types/app';
 import { generateOutfit } from '@/utils/outfitGenerator';
-import { Heart, RefreshCcw, Shirt, Sun } from 'lucide-react';
+import { Heart, RefreshCcw, Shirt, Sun, CalendarDays } from 'lucide-react'; // Added CalendarDays
 import { showSuccess } from '@/utils/toast';
 
 const Index: React.FC = () => {

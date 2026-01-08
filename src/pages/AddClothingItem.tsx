@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { ClothingItem } from '@/types/app';
 import { showSuccess } from '@/utils/toast';
+import { addClothingItem } from '@/utils/clothingStorage'; // Import the new utility
 
 const clothingTypes = ['shirt', 'pants', 'jacket', 'shoes', 'accessory', 'other'];
 const styles = ['casual', 'streetwear', 'formal', 'athletic', 'vintage', 'business casual', 'bohemian', 'minimalist', 'preppy', 'gothic', 'punk', 'other'];
@@ -54,8 +55,25 @@ const AddClothingItem: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you'd send this data to your backend (e.g., Firebase)
-    console.log('New Clothing Item:', formData);
+    // Generate necessary fields for a complete ClothingItem
+    const newItem: ClothingItem = {
+      id: `item-${Date.now()}`, // Simple unique ID
+      userId: 'user1', // Placeholder user ID
+      uploadedAt: new Date().toISOString(),
+      isClean: true, // Default to clean when added
+      ...formData,
+      name: formData.name || 'Unnamed Item', // Ensure name is not empty
+      imageUrl: formData.imageUrl || 'https://via.placeholder.com/150/CCCCCC/000000?text=No+Image', // Default image
+      clothingType: formData.clothingType || 'other',
+      style: formData.style || 'casual',
+      fit: formData.fit || 'regular',
+      season: formData.season || 'all-season',
+      colors: formData.colors || [],
+      warmthLevel: formData.warmthLevel || 'light',
+      occasion: formData.occasion || 'casual',
+    };
+
+    addClothingItem(newItem); // Save the new item to local storage
     showSuccess('Clothing item added successfully!');
     navigate('/closet');
   };

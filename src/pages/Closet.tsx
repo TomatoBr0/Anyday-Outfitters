@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClothingItem } from '@/types/app';
 import { PlusCircle, Shirt } from 'lucide-react';
+import { getClothingItems, setClothingItems } from '@/utils/clothingStorage'; // Import the new utility
 
-const dummyClothingItems: ClothingItem[] = [
+// Initial dummy data for demonstration, only set if local storage is empty
+const initialDummyClothingItems: ClothingItem[] = [
   {
     id: '1', userId: 'user1', name: 'Blue T-Shirt', imageUrl: 'https://via.placeholder.com/150/0000FF/FFFFFF?text=Blue+Tee',
     clothingType: 'shirt', style: 'casual', fit: 'regular', season: 'all-season', colors: ['blue'], warmthLevel: 'light',
@@ -29,7 +31,18 @@ const dummyClothingItems: ClothingItem[] = [
 ];
 
 const Closet: React.FC = () => {
-  const [clothingItems, setClothingItems] = React.useState<ClothingItem[]>(dummyClothingItems);
+  const [clothingItems, setClothingItemsState] = React.useState<ClothingItem[]>([]);
+
+  React.useEffect(() => {
+    const storedItems = getClothingItems();
+    if (storedItems.length === 0) {
+      // If no items in local storage, set initial dummy data
+      setClothingItems(initialDummyClothingItems);
+      setClothingItemsState(initialDummyClothingItems);
+    } else {
+      setClothingItemsState(storedItems);
+    }
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <div className="p-4 md:p-6">
@@ -54,7 +67,7 @@ const Closet: React.FC = () => {
           {clothingItems.map((item) => (
             <Card key={item.id} className="flex flex-col items-center text-center">
               <CardContent className="p-4">
-                {item.imageUrl ? (
+                {item.imageUrl && item.imageUrl !== 'https://via.placeholder.com/150/CCCCCC/000000?text=No+Image' ? (
                   <img src={item.imageUrl} alt={item.name} className="w-full h-32 object-cover rounded-md mb-2" />
                 ) : (
                   <div className="w-full h-32 bg-gray-200 rounded-md flex items-center justify-center text-gray-500 mb-2">
