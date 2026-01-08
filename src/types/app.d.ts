@@ -34,6 +34,7 @@ export interface Outfit {
   explanation: string; // Why this outfit was chosen
   isFavorite: boolean;
   generatedAt: string; // ISO date string
+  lastWornDate?: string; // New: ISO date string for when the outfit was last worn
 }
 
 export interface User {

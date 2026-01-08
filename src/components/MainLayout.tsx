@@ -8,8 +8,7 @@ const navItems = [
   { name: 'Home', path: '/', icon: Home },
   { name: 'Closet', path: '/closet', icon: Shirt },
   { name: 'Add Item', path: '/add-item', icon: PlusCircle },
-  { name: 'Calendar', path: '/calendar', icon: CalendarDays },
-  { name: 'Favorites', path: '/favorites', icon: Heart },
+  { name: 'Outfits', path: '/outfits', icon: Heart }, // Renamed from Favorites
   { name: 'Settings', path: '/settings', icon: Settings },
 ];
 

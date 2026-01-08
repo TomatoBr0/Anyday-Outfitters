@@ -3,8 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Outfit } from '@/types/app';
 import { generateOutfit } from '@/utils/outfitGenerator';
-import { Heart, RefreshCcw, Shirt, Sun, CalendarDays } from 'lucide-react'; // Added CalendarDays
+import { Heart, RefreshCcw, Shirt, Sun, CalendarDays } from 'lucide-react';
 import { showSuccess } from '@/utils/toast';
+import { addOutfit, updateOutfit } from '@/utils/outfitStorage'; // Import outfit storage utilities
 
 const Index: React.FC = () => {
   const [currentOutfit, setCurrentOutfit] = React.useState<Outfit | null>(null);
@@ -23,15 +24,18 @@ const Index: React.FC = () => {
 
   const handleSaveOutfit = () => {
     if (currentOutfit) {
-      // In a real app, save to user's favorites
+      const outfitToSave = { ...currentOutfit, isFavorite: true };
+      addOutfit(outfitToSave); // Save to outfit storage
       showSuccess("Outfit saved to favorites!");
     }
   };
 
   const handleMarkDirty = () => {
     if (currentOutfit) {
-      // In a real app, update clothing item status
-      showSuccess("Items marked as dirty!");
+      const wornOutfit = { ...currentOutfit, lastWornDate: new Date().toISOString() };
+      // In a real app, you might also mark individual clothing items as dirty
+      addOutfit(wornOutfit); // Add as a worn outfit
+      showSuccess("Outfit marked as worn!");
       setCurrentOutfit(null); // Clear current outfit after marking dirty
     }
   };
