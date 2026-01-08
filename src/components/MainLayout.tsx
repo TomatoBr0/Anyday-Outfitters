@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Home, Shirt, CalendarDays, Heart, Settings, PlusCircle } from 'lucide-react';
+import { Home, Shirt, Sparkles, Settings, PlusCircle } from 'lucide-react'; // Changed Mirror to Sparkles, removed CalendarDays
 import { MadeWithDyad } from './made-with-dyad';
 import { cn } from '@/lib/utils';
 
@@ -8,7 +8,7 @@ const navItems = [
   { name: 'Home', path: '/', icon: Home },
   { name: 'Closet', path: '/closet', icon: Shirt },
   { name: 'Add Item', path: '/add-item', icon: PlusCircle },
-  { name: 'Outfits', path: '/outfits', icon: Heart }, // Renamed from Favorites
+  { name: 'Outfits', path: '/outfits', icon: Sparkles }, // Icon changed to Sparkles
   { name: 'Settings', path: '/settings', icon: Settings },
 ];
 
