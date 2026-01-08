@@ -7,8 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ClothingItem } from '@/types/app';
-import { showSuccess } from '@/utils/toast';
-import { addClothingItem } from '@/utils/clothingStorage'; // Import the new utility
+import { showSuccess, showError } from '@/utils/toast'; // Added showError
+import { addClothingItem } from '@/utils/clothingStorage';
 
 const clothingTypes = ['shirt', 'pants', 'jacket', 'shoes', 'accessory', 'other'];
 const styles = ['casual', 'streetwear', 'formal', 'athletic', 'vintage', 'business casual', 'bohemian', 'minimalist', 'preppy', 'gothic', 'punk', 'other'];
@@ -32,10 +32,38 @@ const AddClothingItem: React.FC = () => {
     occasion: undefined,
     isClean: true,
   });
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+    if (id === 'imageUrl') {
+      setImagePreview(value);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        showError('Image size exceeds 2MB. Please choose a smaller image.');
+        e.target.value = ''; // Clear the input
+        setImagePreview(null);
+        setFormData((prev) => ({ ...prev, imageUrl: '' }));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFormData((prev) => ({ ...prev, imageUrl: base64String }));
+        setImagePreview(base64String);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+      setFormData((prev) => ({ ...prev, imageUrl: '' }));
+    }
   };
 
   const handleSelectChange = (id: keyof ClothingItem, value: string) => {
@@ -61,7 +89,7 @@ const AddClothingItem: React.FC = () => {
       userId: 'user1', // Placeholder user ID
       uploadedAt: new Date().toISOString(),
       isClean: true, // Default to clean when added
-      isFavorite: false, // Added missing isFavorite property
+      isFavorite: false,
       ...formData,
       name: formData.name || 'Unnamed Item', // Ensure name is not empty
       imageUrl: formData.imageUrl || 'https://via.placeholder.com/150/CCCCCC/000000?text=No+Image', // Default image
@@ -93,11 +121,24 @@ const AddClothingItem: React.FC = () => {
               <Input id="name" value={formData.name} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL (Placeholder)</Label>
+              <Label htmlFor="imageUrl">Image URL</Label>
               <Input id="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="e.g., https://example.com/shirt.jpg" />
               <p className="text-sm text-muted-foreground">
-                In a real app, this would be an image upload field.
+                Or upload an image:
               </p>
+              <Input
+                id="imageFile"
+                type="file"
+                accept="image/*"
+                capture="environment" // 'environment' for rear camera, 'user' for front camera
+                onChange={handleFileChange}
+                className="mt-2"
+              />
+              {imagePreview && (
+                <div className="mt-4">
+                  <img src={imagePreview} alt="Image Preview" className="w-32 h-32 object-cover rounded-md mx-auto" />
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">

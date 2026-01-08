@@ -3,21 +3,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Outfit } from '@/types/app';
 import { generateOutfit } from '@/utils/outfitGenerator';
-import { Heart, RefreshCcw, Shirt, Sun, CalendarDays } from 'lucide-react';
-import { showSuccess } from '@/utils/toast';
-import { addOutfit, updateOutfit } from '@/utils/outfitStorage'; // Import outfit storage utilities
+import { Heart, RefreshCcw, Shirt, Sun, CalendarDays, CloudOff } from 'lucide-react'; // Added CloudOff
+import { showSuccess, showError } from '@/utils/toast'; // Added showError
+import { addOutfit } from '@/utils/outfitStorage';
+import { useWeather } from '@/hooks/use-weather'; // Import the new hook
 
 const Index: React.FC = () => {
   const [currentOutfit, setCurrentOutfit] = React.useState<Outfit | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingOutfit, setIsLoadingOutfit] = React.useState(false);
+  const { temperature, condition, icon, city, country, isLoading: isLoadingWeather, error: weatherError } = useWeather();
 
   const handleGenerateOutfit = () => {
-    setIsLoading(true);
+    setIsLoadingOutfit(true);
     // Simulate API call
     setTimeout(() => {
-      const outfit = generateOutfit();
+      const outfit = generateOutfit({
+        temperature: temperature ?? undefined,
+        condition: condition ?? undefined,
+      });
       setCurrentOutfit(outfit);
-      setIsLoading(false);
+      setIsLoadingOutfit(false);
       showSuccess("Outfit generated successfully!");
     }, 1000);
   };
@@ -48,11 +53,24 @@ const Index: React.FC = () => {
           <CardDescription className="text-lg">Your personalized style suggestion for the day.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {isLoadingWeather ? (
+            <p className="text-muted-foreground">Loading weather...</p>
+          ) : weatherError ? (
+            <div className="flex flex-col items-center justify-center text-destructive">
+              <CloudOff className="h-8 w-8 mb-2" />
+              <p>{weatherError}</p>
+              <p className="text-sm text-muted-foreground mt-2">Outfit suggestions might be less accurate without weather data.</p>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center space-x-2 text-muted-foreground">
+              {icon && <img src={icon} alt={condition || 'Weather icon'} className="h-8 w-8" />}
+              <span>{city}, {country}: {condition || 'N/A'}, {temperature}°C</span>
+            </div>
+          )}
+
           {currentOutfit ? (
             <div className="space-y-4">
               <div className="flex items-center justify-center space-x-2 text-muted-foreground">
-                <Sun className="h-5 w-5" />
-                <span>{currentOutfit.weatherInfo?.condition || 'Sunny'}, {currentOutfit.weatherInfo?.temperature || 20}°C</span>
                 {currentOutfit.calendarEventInfo && (
                   <>
                     <CalendarDays className="h-5 w-5 ml-4" />
@@ -78,8 +96,8 @@ const Index: React.FC = () => {
                 <Button onClick={handleSaveOutfit} variant="outline" className="flex items-center gap-2">
                   <Heart className="h-4 w-4" /> Save Outfit
                 </Button>
-                <Button onClick={handleGenerateOutfit} disabled={isLoading} className="flex items-center gap-2">
-                  <RefreshCcw className="h-4 w-4" /> {isLoading ? 'Generating...' : 'Reroll Outfit'}
+                <Button onClick={handleGenerateOutfit} disabled={isLoadingOutfit} className="flex items-center gap-2">
+                  <RefreshCcw className="h-4 w-4" /> {isLoadingOutfit ? 'Generating...' : 'Reroll Outfit'}
                 </Button>
                 <Button onClick={handleMarkDirty} variant="destructive" className="flex items-center gap-2">
                   Mark Worn/Dirty
@@ -91,8 +109,8 @@ const Index: React.FC = () => {
               <p className="text-muted-foreground">
                 No outfit generated yet. Let's find you something great!
               </p>
-              <Button onClick={handleGenerateOutfit} disabled={isLoading} className="py-3 text-lg">
-                {isLoading ? 'Generating...' : 'Generate Today\'s Outfit'}
+              <Button onClick={handleGenerateOutfit} disabled={isLoadingOutfit} className="py-3 text-lg">
+                {isLoadingOutfit ? 'Generating...' : 'Generate Today\'s Outfit'}
               </Button>
             </div>
           )}

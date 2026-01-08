@@ -1,6 +1,11 @@
 import { Outfit } from '@/types/app';
 
-export const generateOutfit = (): Outfit => {
+interface GenerateOutfitOptions {
+  temperature?: number;
+  condition?: string;
+}
+
+export const generateOutfit = (options?: GenerateOutfitOptions): Outfit => {
   const outfitId = `outfit-${Date.now()}`;
   const userId = 'user1'; // Placeholder user ID
   const date = new Date().toISOString();
@@ -13,6 +18,9 @@ export const generateOutfit = (): Outfit => {
     "This combination reflects your preferred streetwear style.",
   ];
 
+  let weatherTemperature = options?.temperature ?? (Math.floor(Math.random() * 20) + 10); // 10-30°C
+  let weatherCondition = options?.condition ?? (Math.random() > 0.5 ? 'Sunny' : 'Cloudy');
+
   const randomExplanation = explanations[Math.floor(Math.random() * explanations.length)];
 
   return {
@@ -21,8 +29,8 @@ export const generateOutfit = (): Outfit => {
     itemIds: [`item${Math.floor(Math.random() * 100)}`, `item${Math.floor(Math.random() * 100)}`, `item${Math.floor(Math.random() * 100)}`], // Dummy item IDs
     date: date,
     weatherInfo: {
-      temperature: Math.floor(Math.random() * 20) + 10, // 10-30°C
-      condition: Math.random() > 0.5 ? 'Sunny' : 'Cloudy',
+      temperature: weatherTemperature,
+      condition: weatherCondition,
     },
     calendarEventInfo: Math.random() > 0.7 ? { eventName: 'Team Meeting', eventType: 'work' } : undefined,
     explanation: randomExplanation,
