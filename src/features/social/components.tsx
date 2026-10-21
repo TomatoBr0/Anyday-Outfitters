@@ -52,8 +52,20 @@ export function TagBoard({ items, compact }: { items: PostItemTag[]; compact?: b
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', backgroundColor: colors.surfaceAlt, aspectRatio: 1, padding: compact ? 4 : 10, gap: compact ? 4 : 8 }}>
       {shown.map((t, i) => (
-        <View key={i} style={{ width: cols === 1 ? '100%' : '48.5%', height: shown.length <= 2 ? '100%' : '48.5%', backgroundColor: colors.surface, borderRadius: compact ? 6 : radius.md, alignItems: 'center', justifyContent: 'center' }}>
-          <View style={{ width: '70%', aspectRatio: 1 }}>
+        <View
+          key={i}
+          style={{
+            // 3 pieces: two on top, the last spans the bottom row.
+            width: cols === 1 || (shown.length === 3 && i === 2) ? '100%' : '47%',
+            flexGrow: 1,
+            height: shown.length <= 2 ? '100%' : '47%',
+            backgroundColor: colors.surface,
+            borderRadius: compact ? 6 : radius.md,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <View style={{ height: '78%', aspectRatio: 1 }}>
             <GarmentGlyph item={{ categoryId: t.categoryId, primaryColor: t.primaryColor, secondaryColors: t.secondaryColors ?? [], pattern: t.pattern ?? 'solid' }} size="100%" />
           </View>
         </View>

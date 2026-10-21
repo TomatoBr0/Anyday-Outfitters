@@ -62,7 +62,17 @@ const tapTop = async (locator) => {
   }
   throw new Error('no on-top match for ' + locator);
 };
-const visible = async (t) => page.getByText(t, { exact: false }).first().isVisible().catch(() => false);
+const visible = async (t) => {
+  const loc = page.getByText(t, { exact: false });
+  const n = await loc.count();
+  for (let i = 0; i < n; i++) {
+    const el = loc.nth(i);
+    if (!(await el.isVisible().catch(() => false))) continue;
+    const ok = await el.evaluate((node) => { node.scrollIntoView({ block: 'center' }); const r = node.getBoundingClientRect(); const h = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return !!h && (node === h || node.contains(h) || h.contains(node)); }).catch(() => false);
+    if (ok) return true;
+  }
+  return false;
+};
 
 // ---- Onboarding
 await page.goto(base);
@@ -178,8 +188,10 @@ await tapTop(page.getByLabel(/^Shoes:/));
 await page.waitForTimeout(400);
 await shot('18-create-swap');
 
-// ---- Plan
-await tapLabel('Plan');
+// ---- Plan (opened from Today's calendar button)
+await tapTop(page.getByLabel('Today', { exact: true }));
+await page.waitForTimeout(300);
+await tapTop(page.getByLabel('Plan ahead: calendar and trips'));
 await page.waitForTimeout(600);
 await shot('19-plan-calendar');
 await tapTop(page.getByLabel('New event'));
@@ -205,7 +217,9 @@ await page.getByRole('button', { name: 'Build packing list' }).click();
 await page.waitForTimeout(1200);
 check('trip packing list generated', await visible('From your closet') && await visible('Underwear'));
 await shot('23-trip');
-await tapLabel('Back');
+await tapTop(page.getByLabel('Back'));
+await page.waitForTimeout(300);
+await tapTop(page.getByLabel('Back'));
 
 // ---- Profile + settings
 await page.waitForTimeout(400);
