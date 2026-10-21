@@ -7,7 +7,7 @@ import { GarmentImage } from '@/components/GarmentImage';
 import { Icon } from '@/components/Icon';
 import { Text } from '@/components/Text';
 import { Button, Chip, EmptyState, IconButton, PageHeader, TextField } from '@/components/ui';
-import { GROUP_LABELS, getCategory } from '@/engine/categories';
+import { GROUP_LABELS, allCategories, getCategory } from '@/engine/categories';
 import { COLORS, getColor } from '@/engine/colors';
 import { STYLE_LABELS } from '@/engine/scoring';
 import { useStore } from '@/state/store';
@@ -16,6 +16,9 @@ import { radius, space } from '@/theme/tokens';
 import type { CategoryGroup, ClothingItem, StyleTag } from '@/types/models';
 import { relativeDay } from '@/utils/dates';
 import { haptic } from '@/utils/haptics';
+
+const ORDER = new Map(allCategories().map((c, i) => [c.id, i]));
+const catOrder = (id: string) => ORDER.get(id) ?? 999;
 
 type Status = 'all' | 'favorites' | 'clean' | 'dirty';
 type Sort = 'recent' | 'most' | 'least' | 'name';
@@ -66,7 +69,8 @@ export default function Closet() {
         case 'name':
           return a.name.localeCompare(b.name);
         default:
-          return b.createdAt.localeCompare(a.createdAt);
+          // Items added together (e.g. a batch or the sample closet) group by category.
+          return b.createdAt.localeCompare(a.createdAt) || catOrder(a.categoryId) - catOrder(b.categoryId);
       }
     });
   }, [items, query, group, status, color, style, sort, custom]);

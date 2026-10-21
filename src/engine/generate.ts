@@ -230,38 +230,48 @@ export function chooseAccessories(core: ClothingItem[], pool: ClothingItem[], ct
   return chosen.slice(0, 2);
 }
 
-function titleFor(items: ClothingItem[], ctx: EngineContext, breakdown: ScoreBreakdown): string {
+const TITLES = {
+  rain: ['Rain-ready layers', 'Puddle-proof', 'Dry & put-together', 'Rainy-day uniform'],
+  workout: ['Ready to move', 'Gym-bound', 'Built to sweat'],
+  interview: ['Sharp first impression', 'Interview-ready'],
+  formalEvent: ['Dressed up', 'Evening sharp'],
+  date: ['Date-night easy', 'Low-key romantic', 'Dinner-ready'],
+  cold: ['Bundled & put together', 'Cold-day layers', 'Warm and sharp'],
+  hot: ['Hot-day light', 'Keep it breezy', 'Sun-ready'],
+  neutral: ['Easy neutrals', 'Tonal & calm', 'Quiet neutrals'],
+  streetwear: ['Street-ready', 'Off-duty street'],
+  minimalist: ['Quietly sharp', 'Clean lines'],
+  casual: ['Everyday easy', 'Weekday easy', 'Low-effort good'],
+  smartCasual: ['Smart, not stiff', 'Polished casual'],
+  athletic: ['Off-duty athletic', 'Sporty easy'],
+  vintage: ['Thrifted charm', 'Lived-in classic'],
+  preppy: ['Campus classic', 'Crisp & preppy'],
+  businessCasual: ['Desk to dinner', 'Office-easy'],
+  formal: ['Dressed up', 'Tailored'],
+  workwear: ['Built tough', 'Utility day'],
+  outdoor: ['Trail to town', 'Outdoor-ready'],
+  classic: ['Timeless', 'Classic combo'],
+  trend: ['On-trend', 'Fresh take'],
+  fallback: ['Today’s pick', 'Good to go'],
+} as const;
+
+const NEUTRALS = ['black', 'white', 'grey', 'charcoal', 'cream', 'beige', 'navy', 'tan', 'brown', 'denim', 'olive'];
+
+function titleFor(items: ClothingItem[], ctx: EngineContext, breakdown: ScoreBreakdown, sig: string): string {
+  const pick = (opts: readonly string[]) => opts[hashString(sig) % opts.length];
   const t = ctx.weather ? effectiveTempC(ctx.weather, ctx.coldSensitivity) : undefined;
-  const dom = dominantStyle(items);
   const hasOuter = items.some((i) => slotOf(i, ctx) === 'outerwear');
-  if (ctx.weather && isRainy(ctx.weather) && hasOuter) return 'Rain-ready layers';
-  if (ctx.occasion === 'workout') return 'Ready to move';
-  if (ctx.occasion === 'interview') return 'Sharp first impression';
-  if (ctx.occasion === 'formalEvent') return 'Dressed up';
-  if (ctx.occasion === 'date') return 'Date-night easy';
-  if (t !== undefined && t < 4) return 'Bundled & put together';
-  if (t !== undefined && t >= 27) return 'Hot-day light';
-  if (breakdown.color >= 0.92 && items.every((i) => ['black', 'white', 'grey', 'charcoal', 'cream', 'beige', 'navy', 'tan', 'brown', 'denim', 'olive'].includes(i.primaryColor)))
-    return 'Easy neutrals';
-  if (dom) {
-    const map: Partial<Record<typeof dom, string>> = {
-      streetwear: 'Street-ready',
-      minimalist: 'Quietly sharp',
-      casual: 'Everyday easy',
-      smartCasual: 'Smart, not stiff',
-      athletic: 'Off-duty athletic',
-      vintage: 'Thrifted charm',
-      preppy: 'Campus classic',
-      businessCasual: 'Desk to dinner',
-      formal: 'Dressed up',
-      workwear: 'Built tough',
-      outdoor: 'Trail to town',
-      classic: 'Timeless',
-      trend: 'On-trend',
-    };
-    return map[dom] ?? `${STYLE_LABELS[dom]} look`;
-  }
-  return 'Today’s pick';
+  if (ctx.weather && isRainy(ctx.weather) && hasOuter) return pick(TITLES.rain);
+  if (ctx.occasion === 'workout') return pick(TITLES.workout);
+  if (ctx.occasion === 'interview') return pick(TITLES.interview);
+  if (ctx.occasion === 'formalEvent') return pick(TITLES.formalEvent);
+  if (ctx.occasion === 'date') return pick(TITLES.date);
+  if (t !== undefined && t < 4) return pick(TITLES.cold);
+  if (t !== undefined && t >= 27) return pick(TITLES.hot);
+  if (breakdown.color >= 0.92 && items.every((i) => NEUTRALS.includes(i.primaryColor))) return pick(TITLES.neutral);
+  const dom = dominantStyle(items);
+  if (dom) return pick(TITLES[dom] ?? [`${STYLE_LABELS[dom]} look`]);
+  return pick(TITLES.fallback);
 }
 
 function dedupe(xs: string[]) {
@@ -353,7 +363,7 @@ export function generateOutfits(ctx: EngineContext, opts: { count?: number } = {
       bySlot,
       score: Math.round(clamp01(c.total) * 100),
       breakdown: c.breakdown,
-      title: titleFor(c.items, ctx, c.breakdown),
+      title: titleFor(c.items, ctx, c.breakdown, c.sig),
       reasons: reasons.slice(0, 4),
       warnings: dedupe(warnings),
       signature: c.sig,
@@ -374,9 +384,8 @@ export function swapCandidates(current: ClothingItem[], slot: Slot, ctx: EngineC
   const aff = buildAffinity(ctx);
   const rest = current.filter((i) => slotOf(i, ctx) !== slot);
   const currentIds = new Set(current.map((i) => i.id));
-  let pool = pools[slot];
   // Swapping a top for a one-piece (or vice versa) changes the structure; keep it simple.
-  return pool
+  return pools[slot]
     .filter((i) => !currentIds.has(i.id))
     .map((i) => {
       const items = slot === 'accessory' ? [...current, i] : [...rest, i];

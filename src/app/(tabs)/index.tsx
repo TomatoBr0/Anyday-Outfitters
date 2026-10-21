@@ -222,7 +222,24 @@ export default function Today() {
 
                 <OutfitBoard items={recItems(rec)} lockedIds={locked} onItemPress={onItemPress} />
 
-                <View style={{ paddingHorizontal: 4, paddingTop: space.md, gap: 6 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: space.md }}>
+                  <Button label="Wear today" icon="check" style={{ flex: 1 }} onPress={() => wear(rec)} />
+                  <IconButton icon="thumbUp" label="I like this" background={colors.surfaceAlt} size={48} onPress={() => feedback(rec, 'like')} />
+                  <IconButton icon="thumbDown" label="Not this one" background={colors.surfaceAlt} size={48} onPress={() => feedback(rec, 'dislike')} />
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: space.sm }}>
+                  <Pressable onPress={() => router.push({ pathname: '/create', params: { items: rec.itemIds.join(',') } })} hitSlop={8} style={{ minHeight: 40, justifyContent: 'center' }} accessibilityRole="button">
+                    <Text variant="label" color="accent">
+                      Customize
+                    </Text>
+                  </Pressable>
+                  <Pressable onPress={() => feedback(rec, 'notMyStyle')} hitSlop={8} style={{ minHeight: 40, justifyContent: 'center' }} accessibilityRole="button">
+                    <Text variant="label" color="textMuted">
+                      Not my style
+                    </Text>
+                  </Pressable>
+                </View>
+                <View style={{ paddingHorizontal: 4, paddingTop: space.sm, gap: 6 }}>
                   {rec.reasons.map((r) => (
                     <View key={r} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                       <Icon name="check" size={15} color={colors.accent} strokeWidth={2.2} />
@@ -241,23 +258,6 @@ export default function Today() {
                   ))}
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: space.lg }}>
-                  <Button label="Wear today" icon="check" style={{ flex: 1 }} onPress={() => wear(rec)} />
-                  <IconButton icon="thumbUp" label="I like this" background={colors.surfaceAlt} size={48} onPress={() => feedback(rec, 'like')} />
-                  <IconButton icon="thumbDown" label="Not this one" background={colors.surfaceAlt} size={48} onPress={() => feedback(rec, 'dislike')} />
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: space.sm }}>
-                  <Pressable onPress={() => router.push({ pathname: '/create', params: { items: rec.itemIds.join(',') } })} hitSlop={8} style={{ minHeight: 40, justifyContent: 'center' }} accessibilityRole="button">
-                    <Text variant="label" color="accent">
-                      Customize
-                    </Text>
-                  </Pressable>
-                  <Pressable onPress={() => feedback(rec, 'notMyStyle')} hitSlop={8} style={{ minHeight: 40, justifyContent: 'center' }} accessibilityRole="button">
-                    <Text variant="label" color="textMuted">
-                      Not my style
-                    </Text>
-                  </Pressable>
-                </View>
                 {locked.length > 0 && (
                   <Text variant="caption" color="textMuted" style={{ marginTop: 4, paddingHorizontal: 4 }}>
                     {locked.length} locked — new outfits keep {locked.length === 1 ? 'it' : 'them'}.
@@ -351,7 +351,8 @@ function WornToday({ logId, items }: { logId: ID; items: ClothingItem[] }) {
         <OutfitBoard items={items} />
         <View style={{ flexDirection: 'row', gap: space.sm, marginTop: space.lg }}>
           <Button
-            label="Change outfit"
+            label="Change"
+            icon="refresh"
             variant="secondary"
             style={{ flex: 1 }}
             onPress={() => {
@@ -359,7 +360,7 @@ function WornToday({ logId, items }: { logId: ID; items: ClothingItem[] }) {
               toast({ message: 'Cleared — pick another look', icon: 'refresh' });
             }}
           />
-          <Button label="Plan tomorrow" variant="ghost" icon="calendar" onPress={() => router.push('/plan')} />
+          <Button label="Plan ahead" variant="secondary" icon="calendar" style={{ flex: 1 }} onPress={() => router.push('/plan')} />
         </View>
       </Card>
     </Animated.View>

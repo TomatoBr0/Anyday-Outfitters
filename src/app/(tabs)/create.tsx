@@ -251,7 +251,7 @@ function Builder({ params }: { params: Params }) {
 
       <View style={{ flexDirection: 'row', gap: space.sm, marginTop: space.lg }}>
         <Button label="Fill the rest" icon="sparkles" variant="secondary" style={{ flex: 1 }} onPress={() => fill(true)} />
-        <Button label="Shuffle unlocked" icon="refresh" variant="secondary" style={{ flex: 1 }} onPress={() => fill(false)} />
+        <Button label="Shuffle" icon="refresh" variant="secondary" style={{ flex: 1 }} onPress={() => fill(false)} />
       </View>
 
       {current.length >= 2 && (
