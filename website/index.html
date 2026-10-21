@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Getup — Get up. Get dressed. Get going.</title>
+  <meta name="description" content="Getup turns the clothes you already own into a ready-to-wear outfit every morning — tuned to the weather, your plans and your laundry. Private by design.">
+  <meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121110" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="Getup — your closet, styled every morning">
+  <meta property="og:description" content="A complete outfit in one tap, from clothes you already own.">
+  <meta property="og:image" content="/assets/og-image.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav">
+    <a href="/" class="brand" aria-label="Getup home">
+      <img src="/assets/getup-lockup-horizontal.svg" alt="Getup" class="logo-light" width="128" height="40">
+      <img src="/assets/getup-lockup-horizontal-reversed.svg" alt="" class="logo-dark" width="128" height="40">
+    </a>
+    <nav aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ</a>
+      <a href="#waitlist" class="btn btn-small">Join the waitlist</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="overline">Your closet · your weather · your outfit</p>
+        <h1>Get up.<br>Get dressed.<br><em>Get going.</em></h1>
+        <p class="lede">Getup turns the clothes you already own into a ready-to-wear outfit every morning — tuned to the weather, your plans and what’s actually clean.</p>
+        <form class="waitlist" data-waitlist>
+          <label for="email-hero" class="sr-only">Email address</label>
+          <input id="email-hero" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+          <button class="btn" type="submit">Get early access</button>
+          <p class="form-note" role="status" aria-live="polite">Coming to iPhone first. No spam, ever.</p>
+        </form>
+      </div>
+      <div class="hero-phone">
+        <div class="phone"><img src="/assets/01-today.webp" alt="Getup Today screen showing the weather, a complete outfit of a charcoal jacket, black jeans, white tee and white sneakers, and a Wear today button" width="600" height="1300" fetchpriority="high"></div>
+      </div>
+    </section>
+
+    <section class="problem">
+      <p class="big">You own plenty of clothes. Mornings still start with <em>“I have nothing to wear.”</em></p>
+      <p>Most of us wear the same 20% of our closet on repeat — not because the rest is bad, but because deciding takes time we don’t have at 7:42&nbsp;a.m.</p>
+    </section>
+
+    <section id="how" class="how">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li><span class="num">1</span><h3>Snap your clothes</h3><p>Photograph a few favorites — or start with a sample closet. Getup suggests the color from your photo; you confirm.</p></li>
+        <li><span class="num">2</span><h3>Open the app</h3><p>Getup checks your forecast, today’s plans and your laundry, then builds a complete look from what you own.</p></li>
+        <li><span class="num">3</span><h3>Get dressed</h3><p>Tap <strong>Wear today</strong>. Your wear history updates, laundry is tracked, and tomorrow’s pick stays fresh.</p></li>
+      </ol>
+    </section>
+
+    <section id="features" class="features">
+      <h2>Thoughtful where it counts</h2>
+      <div class="grid">
+        <article><h3>Weather-aware</h3><p>Rain means boots and a shell. Cold means layers. Tell us if you run warm or cold — two people dress differently at 65°.</p></article>
+        <article><h3>Explains every pick</h3><p>“Rain-ready outer layer. Brings back your cream sweater.” No black box.</p></article>
+        <article><h3>Lock & build</h3><p>Love those jeans today? Lock them and Getup styles everything else around them.</p></article>
+        <article><h3>Laundry that’s realistic</h3><p>A tee goes in the hamper after one wear; jeans after five; a coat after twenty. You set the rules.</p></article>
+        <article><h3>Plan ahead</h3><p>Add an event — interview, date, gallery opening — and pick the outfit days before.</p></article>
+        <article><h3>Packs for you</h3><p>Trip lists built from your own closet, using the destination forecast. Fewer pieces, more outfits.</p></article>
+      </div>
+    </section>
+
+    <section class="screens" aria-label="App screenshots">
+      <div class="rail">
+        <figure><div class="phone"><img src="/assets/02-closet.webp" alt="Closet grid with filters for tops, bottoms, shoes and accessories" loading="lazy" width="600" height="1300"></div><figcaption>Your closet, organized</figcaption></figure>
+        <figure><div class="phone"><img src="/assets/03-create.webp" alt="Outfit builder with a match score and reasons" loading="lazy" width="600" height="1300"></div><figcaption>Build around a favorite</figcaption></figure>
+        <figure><div class="phone"><img src="/assets/04-plan.webp" alt="Calendar with an upcoming gallery opening and a suggested outfit" loading="lazy" width="600" height="1300"></div><figcaption>Plan for what’s next</figcaption></figure>
+        <figure><div class="phone"><img src="/assets/06-profile.webp" alt="Closet insights showing percent of wardrobe worn and your color palette" loading="lazy" width="600" height="1300"></div><figcaption>Wear more of what you own</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="story">
+      <img src="/assets/getup-mark.svg" alt="" width="72" height="72">
+      <h2>Why the hanger has a sunrise</h2>
+      <p>Getup started with one small frustration: standing in front of a full closet, already late. The name says the whole idea twice — you <em>get up</em>, and we hand you your <em>getup</em>. The mark is a hanger whose bar is a horizon, with the sun coming up through it. Morning, handled.</p>
+    </section>
+
+    <section class="privacy">
+      <h2>Your closet stays yours</h2>
+      <p>No account. No ad trackers. Your photos, outfits and history live on your phone. The only thing that leaves is your approximate location — to fetch the forecast.</p>
+      <a href="/privacy">Read the privacy policy</a>
+    </section>
+
+    <section id="faq" class="faq">
+      <h2>Questions</h2>
+      <details><summary>Is it free?</summary><p>Yes. Everything you need to get dressed every day — closet, daily outfits, laundry, planning, packing — is free. A future “Plus” tier may add extras like sync and advanced insights.</p></details>
+      <details><summary>Do I have to photograph my entire closet?</summary><p>No. Five or six pieces is enough for your first outfit. Add the rest whenever — you can even add items without a photo.</p></details>
+      <details><summary>Is this “AI”?</summary><p>It’s a transparent scoring engine — style, color, weather, occasion, your feedback, and rotation — that runs entirely on your phone. Every suggestion tells you why it was chosen.</p></details>
+      <details><summary>Does it work for any style?</summary><p>Streetwear, minimalist, preppy, workwear, athletic, vintage, formal — pick several. Getup never assumes what you should wear based on gender.</p></details>
+      <details><summary>Android?</summary><p>iPhone first. Android is built from the same code and will follow.</p></details>
+    </section>
+
+    <section id="waitlist" class="cta">
+      <h2>Be first in line</h2>
+      <p>Get an invite to the beta when it opens.</p>
+      <form class="waitlist" data-waitlist>
+        <label for="email-cta" class="sr-only">Email address</label>
+        <input id="email-cta" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        <button class="btn btn-light" type="submit">Join the waitlist</button>
+        <p class="form-note" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <img src="/assets/getup-mark.svg" alt="" width="28" height="28">
+    <p>© 2026 Getup · <a href="/privacy">Privacy</a> · <a href="/support">Support</a> · <a href="mailto:hello@example.com">Contact</a></p>
+    <p class="fine">Weather data by Open-Meteo.com. “Getup” is a working name pending trademark review.</p>
+  </footer>
+  <script src="/app.js" defer></script>
+</body>
+</html>
