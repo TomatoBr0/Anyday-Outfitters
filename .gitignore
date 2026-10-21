@@ -42,3 +42,9 @@ example
 /ios
 /android
 legacy/node_modules
+
+# asset tooling scratch
+.video-frames-*/
+.video-*.log
+tools/node_modules/
+tools/.tmp-promo.html

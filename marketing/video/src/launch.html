@@ -1,0 +1,243 @@
+<!doctype html>
+<!--
+  Getup launch film — deterministic, frame-addressable animation.
+  window.seek(t) renders the frame at t seconds. Format comes from ?f=vertical|horizontal.
+  Rendered by tools/video.mjs (Playwright) → ffmpeg. All visuals are original or real app captures.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Fraunces; font-weight: 600; src: url(../../../node_modules/@expo-google-fonts/fraunces/600SemiBold/Fraunces_600SemiBold.ttf); }
+@font-face { font-family: Fraunces; font-weight: 400; font-style: italic; src: url(../../../node_modules/@expo-google-fonts/fraunces/400Regular_Italic/Fraunces_400Regular_Italic.ttf); }
+@font-face { font-family: Inter; font-weight: 500; src: url(../../../node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf); }
+@font-face { font-family: Inter; font-weight: 600; src: url(../../../node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf); }
+:root { --linen: #F5F1EA; --ink: #1C1B19; --night: #121110; --cream: #F2EDE4; --clay: #B5583A; --clayText: #A24C31; --sage: #4F6249; --muted: #5E5850; }
+* { margin: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body { background: var(--linen); font-family: Inter; color: var(--ink); position: relative; }
+.layer { position: absolute; inset: 0; }
+.center { display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.display { font-family: Fraunces; font-weight: 600; letter-spacing: -0.03em; line-height: 1.02; }
+.ital { font-family: Fraunces; font-style: italic; font-weight: 400; color: var(--clayText); }
+#night { background: var(--night); }
+#sunrise { border-radius: 50%; background: radial-gradient(circle, #E07A57 0%, #B5583A 60%, #B5583A 100%); position: absolute; left: 50%; }
+.tile { position: absolute; border-radius: 22px; background: #26231F; display: flex; align-items: center; justify-content: center; }
+.phone { position: absolute; background: var(--ink); border-radius: 64px; padding: 14px; box-shadow: 0 40px 100px rgba(58,46,31,.28); }
+.screen { width: 100%; height: 100%; border-radius: 52px; overflow: hidden; position: relative; background: var(--linen); }
+.screen img { position: absolute; left: 0; top: 0; width: 100%; }
+.chip { position: absolute; background: #FBF8F3; border-radius: 999px; padding: 18px 28px; font: 600 30px Inter; box-shadow: 0 16px 40px rgba(58,46,31,.18); display: flex; align-items: center; gap: 14px; white-space: nowrap; }
+.chip .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--sage); }
+.ripple { position: absolute; border-radius: 50%; border: 6px solid var(--clay); }
+.headline { position: absolute; }
+</style>
+</head>
+<body>
+  <!-- Scene 1: the problem -->
+  <div id="s1" class="layer" style="background: var(--night)">
+    <div id="tiles" class="layer"></div>
+    <div class="layer center" style="color: var(--cream); text-align: center">
+      <div id="clock" class="display" style="font-size: 200px">7:42</div>
+      <div id="l1" class="display" style="font-size: 92px; margin-top: 30px">Full closet.</div>
+      <div id="l2" class="display" style="font-size: 92px"><span class="ital" style="color:#E07A57">Nothing</span> to wear.</div>
+    </div>
+  </div>
+  <div id="sunrise"></div>
+
+  <!-- Scene 2: logo -->
+  <div id="s2" class="layer center">
+    <svg id="mark" viewBox="0 0 100 100" width="360" height="360">
+      <defs><clipPath id="sunclip"><rect x="0" y="0" width="100" height="69.5"/></clipPath></defs>
+      <g clip-path="url(#sunclip)"><path id="sun" d="M34 69.5a16 16 0 0 1 32 0Z" fill="#B5583A"/></g>
+      <path id="hanger" d="M50 33 15.6 63.2c-2.6 2.3-1 6.3 2.4 6.3h64c3.4 0 5-4 2.4-6.3L50 33Z" fill="none" stroke="#1C1B19" stroke-width="6.5" stroke-linejoin="round" pathLength="1"/>
+      <path id="hook" d="M50 33V28.6c0-2.6 1.9-4 4-5.4a8 8 0 1 0-12.1-6.9" fill="none" stroke="#1C1B19" stroke-width="6.5" stroke-linecap="round" pathLength="1"/>
+    </svg>
+    <div id="word" class="display" style="font-size: 170px; margin-top: 10px">getup</div>
+    <div id="tag" class="display" style="font-size: 64px; margin-top: 34px; text-align: center"></div>
+  </div>
+
+  <!-- Scenes 3–5: product -->
+  <div id="product" class="layer">
+    <div id="head" class="headline display"></div>
+    <div id="sub" class="headline" style="font: 500 36px/1.35 Inter; color: var(--muted)"></div>
+    <div id="phone" class="phone"><div class="screen" id="screen">
+      <img id="imgCloset" src="../captures/closet-tall.png">
+      <img id="imgClear" src="../captures/today-clear.png">
+      <img id="imgRain" src="../captures/today-rain.png">
+      <img id="imgDressed" src="../captures/dressed.png">
+    </div></div>
+    <div id="chips"></div>
+    <div id="ripple" class="ripple"></div>
+  </div>
+
+  <!-- Scene 6: end card -->
+  <div id="s6" class="layer center" style="text-align: center">
+    <img id="endLogo" src="../../../branding/logo/getup-lockup-horizontal.svg">
+    <div id="endTag" class="display" style="font-size: 76px; margin-top: 46px">Get up. Get dressed.<br><span class="ital">Get going.</span></div>
+    <div id="endCta" style="margin-top: 50px; font: 600 34px Inter; background: var(--ink); color: var(--cream); padding: 24px 46px; border-radius: 999px">Coming soon to iPhone</div>
+  </div>
+
+<script>
+const F = new URLSearchParams(location.search).get('f') || 'vertical';
+const V = F === 'vertical';
+const W = V ? 1080 : 1920, H = V ? 1920 : 1080;
+const $ = (id) => document.getElementById(id);
+
+// ---------- easing helpers
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const ease = (x) => 1 - Math.pow(1 - x, 3);          // easeOutCubic
+const inOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const fade = (t, a, b, c, d) => (t < b ? ease(prog(t, a, b)) : 1 - ease(prog(t, c, d)));
+const show = (el, o, extra = '') => { el.style.opacity = o; el.style.visibility = o > 0.001 ? 'visible' : 'hidden'; if (extra) el.style.transform = extra; };
+
+// ---------- scene 1 garment tiles (original flat illustrations)
+const SH = {
+  tee: 'M31 16 13 27l7 15 9-4v48h42V38l9 4 7-15-18-11c-3 6-10 10-19 10s-16-4-19-10Z',
+  long: 'M32 14 18 22 9 72l11 3 9-34v47h42V41l9 34 11-3-9-50-14-8c-3 6-9 9-18 9s-15-3-18-9Z',
+  pants: 'M29 10h42l6 82H58L50 38l-8 54H23Z',
+  shoe: 'M10 64c0-9 6-15 14-16l14-4c5 9 13 12 23 12l17 3c8 2 12 6 12 13v5H10Z',
+  dress: 'M39 8h4l7 12 7-12h4l2 24 14 58H22l14-58Z',
+  coat: 'M32 10 17 18 8 78l11 3 9-36v48h44V45l9 36 11-3-9-60-15-8-8 8h-12l-8-8Z',
+};
+const TILES = [
+  ['tee', '#F7F7F5'], ['pants', '#4A6A91'], ['long', '#9CAA8B'], ['shoe', '#F7F7F5'], ['coat', '#B88A57'], ['dress', '#141414'],
+  ['tee', '#9C4A26'], ['pants', '#3B3B3D'], ['long', '#1E2A44'], ['shoe', '#6B4A33'], ['tee', '#C3B4DE'], ['pants', '#D6C3A1'],
+];
+const tiles = TILES.map(([s, c], i) => {
+  const d = document.createElement('div');
+  d.className = 'tile';
+  const size = V ? 200 : 180;
+  d.style.width = d.style.height = size + 'px';
+  d.innerHTML = `<svg viewBox="0 0 100 100" width="${size * 0.7}" height="${size * 0.7}"><path d="${SH[s]}" fill="${c}"/></svg>`;
+  $('tiles').appendChild(d);
+  // deterministic pseudo-random layout
+  const r = (k) => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
+  return { d, x: r(1) * (W - size), y: r(2) * (H - size), rot: (r(3) - 0.5) * 50, delay: r(4) * 1.2, spin: (r(5) - 0.5) * 40, size };
+});
+
+// ---------- product scene layout
+const phoneW = V ? 600 : 420, phoneH = phoneW * 2796 / 1290 * 0.97;
+const phone = $('phone');
+phone.style.width = phoneW + 'px'; phone.style.height = phoneH + 'px';
+const phoneX = V ? (W - phoneW) / 2 : W - phoneW - 300;
+const phoneY = V ? 640 : (H - phoneH) / 2;
+const head = $('head'), sub = $('sub');
+if (V) { head.style.cssText += `left:80px;right:80px;top:170px;text-align:center;font-size:96px`; sub.style.cssText += `left:120px;right:120px;top:${170 + 220}px;text-align:center`; }
+else { head.style.cssText += `left:160px;width:900px;top:330px;font-size:104px`; sub.style.cssText += `left:160px;width:760px;top:580px`; }
+
+const SCENES = [
+  { a: 10, b: 18, head: 'Your closet,<br><span class="ital">organized.</span>', sub: 'Snap what you own. Search it, filter it, see what’s clean.' },
+  { a: 18, b: 28, head: 'An outfit,<br><span class="ital">ready.</span>', sub: 'Built from your clothes — for today’s weather and plans.' },
+  { a: 28, b: 35, head: 'One tap.<br><span class="ital">Out the door.</span>', sub: 'Wear it, and Getup tracks laundry and history for you.' },
+];
+const CHIPS = [
+  // [text, start, end, xFracOfPhone, yFracOfPhone]
+  ['27 pieces, all yours', 11.6, 17.6, -0.18, 0.18],
+  ['Search & filter', 12.6, 17.6, 0.62, 0.42],
+  ['Knows what’s clean', 13.6, 17.6, -0.22, 0.68],
+  ['55° and clear', 19.2, 22.6, 0.55, 0.12],
+  ['Only clean clothes', 20.2, 22.6, -0.25, 0.45],
+  ['Rain? Shell + boots.', 23.4, 27.7, 0.5, 0.12],
+  ['Explains every pick', 24.8, 27.7, -0.24, 0.8],
+  ['Laundry tracked', 30.2, 34.6, 0.6, 0.3],
+  ['History saved', 31.0, 34.6, -0.2, 0.62],
+];
+const chipEls = CHIPS.map(([text]) => {
+  const c = document.createElement('div');
+  c.className = 'chip';
+  c.innerHTML = `<span class="dot"></span>${text}`;
+  $('chips').appendChild(c);
+  return c;
+});
+
+function seek(t) {
+  // ----- Scene 1 (0–6)
+  const s1 = 1 - prog(t, 5.2, 6.0);
+  show($('s1'), s1);
+  $('clock').style.opacity = fade(t, 0.2, 0.9, 99, 100);
+  $('clock').style.transform = `translateY(${(1 - ease(prog(t, 0.2, 0.9))) * 40}px)`;
+  $('l1').style.opacity = fade(t, 1.4, 2.0, 99, 100);
+  $('l2').style.opacity = fade(t, 2.6, 3.2, 99, 100);
+  tiles.forEach((k, i) => {
+    const p = ease(prog(t, 0.1 + k.delay, 1.6 + k.delay));
+    const drift = Math.sin(t * 1.3 + i) * 12;
+    const chaos = prog(t, 3.0, 5.0);
+    k.d.style.opacity = p * (0.55 - chaos * 0.25);
+    k.d.style.transform = `translate(${k.x + drift + chaos * (i % 2 ? 60 : -60)}px, ${k.y + (1 - p) * 120 + chaos * 40}px) rotate(${k.rot + chaos * k.spin}deg)`;
+  });
+  // sunrise transition (4.8–6.2): clay disk rises and swells to fill → linen
+  const sr = prog(t, 4.6, 6.0);
+  const sun = $('sunrise');
+  const size = (V ? 900 : 900) + inOut(sr) * Math.max(W, H) * 2.6;
+  sun.style.width = sun.style.height = size + 'px';
+  sun.style.top = (H + 200 - inOut(clamp(sr * 1.6)) * (H * 0.5 + 400) - size / 2 + (V ? 300 : 150)) + 'px';
+  sun.style.marginLeft = -size / 2 + 'px';
+  show(sun, sr > 0 && t < 6.6 ? 1 - prog(t, 6.0, 6.6) : 0);
+
+  // ----- Scene 2 (5.6–10)
+  const s2 = t >= 5.6 && t < 10.4 ? 1 - prog(t, 9.8, 10.4) : 0;
+  show($('s2'), s2);
+  $('hanger').style.strokeDasharray = '1'; $('hanger').style.strokeDashoffset = 1 - inOut(prog(t, 6.0, 7.1));
+  $('hook').style.strokeDasharray = '1'; $('hook').style.strokeDashoffset = 1 - inOut(prog(t, 6.6, 7.3));
+  $('sun').setAttribute('transform', `translate(0 ${(1 - back(prog(t, 7.0, 7.9))) * 18})`);
+  $('word').style.opacity = ease(prog(t, 7.4, 8.1));
+  $('word').style.transform = `translateY(${(1 - ease(prog(t, 7.4, 8.1))) * 30}px)`;
+  const words = ['Get up.', 'Get dressed.', '<span class="ital">Get going.</span>'];
+  $('tag').innerHTML = words.map((w, i) => `<span style="opacity:${ease(prog(t, 8.1 + i * 0.4, 8.6 + i * 0.4))};display:inline-block;transform:translateY(${(1 - ease(prog(t, 8.1 + i * 0.4, 8.6 + i * 0.4))) * 20}px)">${w}</span>`).join(' ');
+
+  // ----- Scenes 3–5 (10–35.4)
+  const pr = t >= 10 && t < 35.6 ? Math.min(ease(prog(t, 10, 10.6)), 1 - prog(t, 35, 35.6)) : 0;
+  show($('product'), pr);
+  const sc = SCENES.find((s) => t >= s.a && t < s.b) || SCENES[2];
+  const local = fade(t, sc.a + 0.1, sc.a + 0.7, sc.b - 0.5, sc.b);
+  head.innerHTML = sc.head; sub.innerHTML = sc.sub;
+  head.style.opacity = local; sub.style.opacity = local * 0.95;
+  head.style.transform = sub.style.transform = `translateY(${(1 - ease(prog(t, sc.a + 0.1, sc.a + 0.7))) * 24}px)`;
+  const enter = back(prog(t, 10.2, 11.2));
+  phone.style.left = phoneX + 'px';
+  phone.style.top = phoneY + (1 - enter) * (V ? 900 : 700) + 'px';
+  phone.style.transform = `rotate(${V ? 0 : 3}deg)`;
+  // screens
+  const closetOn = t < 18.2 ? 1 : 1 - prog(t, 18.0, 18.5);
+  const clearOn = Math.min(prog(t, 18.0, 18.5), 1 - prog(t, 22.7, 23.2));
+  const rainOn = Math.min(prog(t, 22.7, 23.2), 1 - prog(t, 29.3, 29.7));
+  const dressedOn = prog(t, 29.3, 29.7);
+  show($('imgCloset'), closetOn); show($('imgClear'), clearOn); show($('imgRain'), rainOn); show($('imgDressed'), dressedOn);
+  const scroll = inOut(prog(t, 12.0, 17.2));
+  const tallH = phoneW * 2600 / 932 - 28; // rendered height of the tall capture
+  $('imgCloset').style.transform = `translateY(${-scroll * (tallH - phoneH * 0.95)}px)`;
+  // chips
+  CHIPS.forEach(([, a, b, fx, fy], i) => {
+    const o = fade(t, a, a + 0.4, b - 0.3, b);
+    const el = chipEls[i];
+    el.style.opacity = o;
+    el.style.left = phoneX + fx * phoneW + 'px';
+    el.style.top = phoneY + fy * phoneH + 'px';
+    el.style.transform = `scale(${0.85 + 0.15 * back(prog(t, a, a + 0.45))})`;
+  });
+  // tap ripple on "Wear today" (≈ 69% down the screen, left half)
+  const rp = prog(t, 28.9, 29.6);
+  const rip = $('ripple');
+  const rs = 40 + rp * 220;
+  rip.style.width = rip.style.height = rs + 'px';
+  rip.style.left = phoneX + phoneW * 0.36 - rs / 2 + 'px';
+  rip.style.top = phoneY + phoneH * 0.462 - rs / 2 + 'px';
+  rip.style.opacity = rp > 0 && rp < 1 ? 1 - rp : 0;
+
+  // ----- Scene 6 end card (35–40)
+  const e = ease(prog(t, 35.4, 36.2));
+  show($('s6'), t >= 35.3 ? e : 0);
+  $('endLogo').style.width = (V ? 620 : 640) + 'px';
+  $('endLogo').style.transform = `translateY(${(1 - e) * 30}px)`;
+  $('endTag').style.opacity = ease(prog(t, 36.2, 37.0));
+  $('endCta').style.opacity = ease(prog(t, 37.0, 37.7));
+  $('endCta').style.transform = `scale(${0.9 + 0.1 * back(prog(t, 37.0, 37.7))})`;
+}
+window.seek = seek;
+window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map((i) => (i.complete ? 1 : new Promise((r) => (i.onload = r))))));
+seek(0);
+</script>
+</body>
+</html>
