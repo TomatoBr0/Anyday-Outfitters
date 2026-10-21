@@ -89,8 +89,11 @@ export interface ClothingItem {
   lastWornOn?: ISODate;
   wearCount: number;
   favorite: boolean;
-  /** Absolute file:// URI inside the app's document directory. */
-  imageUri?: string;
+  /**
+   * Path relative to the app's document directory (e.g. "wardrobe/abc.jpg").
+   * Stored relative because iOS can move the app container between updates.
+   */
+  imagePath?: string;
   brand?: string;
   notes?: string;
   createdAt: ISODateTime;
@@ -117,6 +120,8 @@ export interface WearLog {
   itemIds: ID[];
   outfitId?: ID;
   createdAt: ISODateTime;
+  /** Item state before this wear, so "Undo" can restore it exactly. */
+  previous?: Pick<ClothingItem, 'id' | 'clean' | 'wearsSinceWash' | 'lastWornOn' | 'wearCount'>[];
 }
 
 export type FeedbackKind = 'like' | 'dislike' | 'notMyStyle';

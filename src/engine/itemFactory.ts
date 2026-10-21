@@ -35,7 +35,7 @@ export function createItem(
     lastWornOn: input.lastWornOn,
     wearCount: input.wearCount ?? 0,
     favorite: input.favorite ?? false,
-    imageUri: input.imageUri,
+    imagePath: input.imagePath,
     brand: input.brand,
     notes: input.notes,
     sample: input.sample,
