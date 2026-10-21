@@ -7,6 +7,7 @@
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo/ui": "~57.0.25",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@supabase/supabase-js": "^2.118.0",
     "@types/jest": "29.5.14",
     "expo": "~57.0.30",
     "expo-blur": "~57.0.3",
@@ -60,7 +61,8 @@
     "lint": "expo lint",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run lint && npm test"
+    "check": "npm run typecheck && npm run lint && npm test",
+    "bench": "jest --testMatch '<rootDir>/bench/**/*.bench.ts' --runInBand"
   },
   "private": true,
   "jest": {

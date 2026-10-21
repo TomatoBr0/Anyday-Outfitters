@@ -48,3 +48,4 @@ legacy/node_modules
 .video-*.log
 tools/node_modules/
 tools/.tmp-promo.html
+bench/out/

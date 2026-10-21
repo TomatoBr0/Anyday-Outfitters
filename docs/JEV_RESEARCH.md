@@ -102,3 +102,26 @@ Pricing sources: Jev https://docs.typesafe.ai/models.md; Haiku 5.5 $0.10/MTok in
   4. Measure agreement with human labels and confidence calibration on our own data before any rollout. Vendor performance numbers are unverified.
   5. Read the MCA and DPA before sending user data. Confirm pricing is not "temporary or subsidized" (an unanswered FAQ on typesafe.ai).
 - Open items to resolve with the vendor: Cloudflare Workers/React Native support, SDK license, SLA, free tier, published rate limits.
+
+---
+
+## Benchmark (run 2026-10-21) — `npm run bench`
+
+Harness: `bench/recommendation.bench.ts`. It uses 11 fixed scenarios (mild, hot, freezing, rain, wind, interview, date, workout, laundry day, a tiny closet, no weather) over the 27-piece sample closet. Objective checks are computed automatically. Quality ratings come from humans via `bench/out/rating-sheet.csv`.
+
+| Provider | Status | p50 / p95 latency | Failures | Complete / shoes / no-dirty / weather-ok / occasion-ok | Offline | Cost per 1,000 |
+|---|---|---|---|---|---|---|
+| Deterministic engine | **Ran** (550 runs) | 28 ms / 47 ms (Node + Jest on a cloud VM, not a phone) | 0 | 11/11 for every check | Yes | $0 |
+| Jev (re-ranking the engine's top 5) | **Not run.** Needs `JEV_API_KEY`, which is a paid API. Not purchased | — | — | — | No | About $0.06 (estimate in §5, not measured) |
+| Local ML | **Not run.** There's no labelled feedback data yet | — | — | — | Yes | $0 |
+
+The Jev provider's request shape follows the public docs but **has not been exercised**. Check it against docs.typesafe.ai before the first paid run. Human quality ratings have not been collected yet.
+
+## Decision
+
+**Experiment behind a feature flag, later. Don't adopt now.**
+
+- The deterministic engine already passes every objective check offline at $0. Jev can't improve offline use or privacy, and it adds a server proxy, a key and a vendor dependency.
+- The only plausible wins are fuzzy occasion fit ("is this smart enough for a gallery opening?") and moderation triage. Both are online-only and server-side.
+- Plan if pursued: a `RecommendationProvider` interface (the bench's `Provider` shape), a Cloudflare Worker proxy that holds the key, a flag defaulting to off, and the deterministic engine as the fallback on any error or timeout over 800 ms. Then compare human ratings from the rating sheet between the two providers. Adopt only if Jev wins clearly.
+- Jev is **not used** for image recognition, which it doesn't do, or for feed ranking, where the transparent rules in `src/social/rules.ts` suffice.
