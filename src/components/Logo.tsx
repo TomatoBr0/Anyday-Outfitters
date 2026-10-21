@@ -25,12 +25,12 @@ interface MarkProps {
 }
 
 export function LogoMark({ size = 48, ink, sun, tile, tileColor }: MarkProps) {
-  const { colors } = useTheme();
+  const { colors, scheme } = useTheme();
   const stroke = ink ?? colors.text;
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100" accessibilityLabel="Getup logo" accessibilityRole="image">
       {tile && <Rect x={0} y={0} width={100} height={100} rx={22} fill={tileColor ?? palette.linen100} />}
-      <Path d={MARK_PATHS.sun} fill={sun ?? colors.sun} />
+      <Path d={MARK_PATHS.sun} fill={sun ?? (scheme === 'dark' ? palette.clay400 : palette.clay600)} />
       <Path d={MARK_PATHS.hanger} fill="none" stroke={stroke} strokeWidth={6.5} strokeLinejoin="round" />
       <Path d={MARK_PATHS.hook} fill="none" stroke={stroke} strokeWidth={6.5} strokeLinecap="round" />
     </Svg>

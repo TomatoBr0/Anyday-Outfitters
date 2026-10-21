@@ -1,56 +1,76 @@
-# Welcome to your Expo app 👋
+# Getup — your closet, your weather, your outfit
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> **Get up. Get dressed. Get going.**
+> Getup turns the clothes you already own into a ready-to-wear outfit every morning. It weighs the weather, your plans, what's in the laundry and what you've worn lately.
 
-## Get started
+*Working title was "AnyDay Outfitters". "Getup" is the provisional brand; see [`branding/NAMING.md`](branding/NAMING.md). To rename it, see [`docs/RENAMING.md`](docs/RENAMING.md).*
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## What's in this repo
 
-2. Start the app
+| Path | What |
+|---|---|
+| `src/app/` | Screens (Expo Router file-based routes) |
+| `src/components/` | Design-system components (buttons, chips, cards, icons, logo, garment glyphs) |
+| `src/features/` | Feature modules (closet, outfits, onboarding, weather, trips) |
+| `src/engine/` | **Outfit recommendation engine.** Pure TypeScript, runs offline |
+| `src/services/` | Weather (Open-Meteo), location, photo storage, on-device color suggestion |
+| `src/storage/` | Local persistence (repository abstraction + migrations) |
+| `src/state/` | App state (zustand) with debounced write-through persistence |
+| `src/theme/` | Design tokens (colors, type, spacing, motion) and light/dark theming |
+| `tests/` | Jest unit/integration tests (53 tests) |
+| `tools/` | Asset rendering + end-to-end QA scripts (Playwright). Not shipped in the app |
+| `branding/` | Naming research, brand guidelines, logo SVGs, exported icons, tokens |
+| `website/` | Marketing landing page (static, ready for Cloudflare Pages) |
+| `marketing/` | App Store copy, screenshots, launch video, social assets |
+| `docs/` | Architecture, engine, privacy/terms drafts, testing, launch checklists |
+| `legacy/` | The previous Vite prototype, kept for reference only |
 
-   ```bash
-   npx expo start
-   ```
+## Run it on your iPhone (from Windows)
 
-In the output, you'll find options to open the app in a
+You need **Node.js 22 LTS** (22.13 or newer), a **free Expo account**, and the **Expo Go** app from the App Store.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```powershell
+git clone https://github.com/TomatoBr0/Anyday-Outfitters.git
+cd Anyday-Outfitters
+git checkout rebuild/expo-mvp
+npm install
+npx expo login          # sign in with your Expo account
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+1. On the iPhone, open **Expo Go** → tap the avatar (top right) → sign in with the **same** Expo account. Expo Go now requires this.
+2. Keep the phone and PC on the **same Wi-Fi**, then scan the QR code in the terminal with the iPhone **Camera** app.
+3. If the phone can't reach your PC (a school or office network, or Windows Firewall), run `npx expo start --tunnel`.
 
-### Other setup steps
+**SDK version:** the project targets **Expo SDK 57**, which the App Store version of Expo Go supports as of October 2026. When Expo Go updates to SDK 58 (expected within weeks), it will say the project is incompatible. Upgrade with:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```powershell
+npx expo install expo@^58.0.0 --fix
+npx expo-doctor
+```
 
-## Learn more
+No Xcode or Mac is needed for development. Publishing to the App Store later uses EAS Build in the cloud (see [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md)).
 
-To learn more about developing your project with Expo, look at the following resources:
+### Other ways to run it
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```powershell
+npx expo start --web     # browser preview (camera/photos/haptics are limited on web)
+npm test                 # 53 Jest tests (engine, color detection, store, weather)
+npm run typecheck        # TypeScript
+npm run lint             # ESLint (expo config + React Compiler rules)
+npm run check            # all three
+```
 
-## Join the community
+## How it works (short version)
 
-Join our community of developers creating universal apps.
+- **Local-first.** The closet, outfits, history, events and trips live in AsyncStorage, one key per collection. Photos are saved as resized JPEGs in the app's documents folder, stored by relative path. There's no account and no server.
+- **Recommendations.** These are deterministic and explainable, not a paid LLM. Hard filters remove dirty or unavailable items and extreme weather mismatches. A weighted score covers style, color, weather, occasion, learned preference and rotation. Every pick comes with reasons. Details: [`docs/RECOMMENDATION_ENGINE.md`](docs/RECOMMENDATION_ENGINE.md).
+- **Learning.** Likes, dislikes and wears adjust item and pair affinities with a 60-day half-life. It's transparent counting, not ML.
+- **Weather.** This uses [Open-Meteo](https://open-meteo.com). There's a 30-minute cache, a stale cache for up to 3 days when offline, and a clearly labelled seasonal estimate otherwise. *Open-Meteo's free tier is non-commercial; see the launch checklist.*
+- **Photos → color.** The main color is suggested on-device: the photo is resized to 32×32, the PNG is decoded in JS, the background is subtracted, and colors are matched to the palette. It's a suggestion the user confirms. Garment type isn't auto-detected yet, and the UI says so.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Project status
+
+See [`PROGRESS.md`](PROGRESS.md) for what's done, test results, known issues and the exact next steps. [`CHANGELOG.md`](CHANGELOG.md) has the version history.
