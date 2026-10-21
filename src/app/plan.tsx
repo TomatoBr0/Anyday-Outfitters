@@ -4,7 +4,7 @@ import { Pressable, View } from 'react-native';
 
 import { Icon } from '@/components/Icon';
 import { Text } from '@/components/Text';
-import { Badge, Button, Card, EmptyState, IconButton, PageHeader, Screen, SectionHeader, Segmented } from '@/components/ui';
+import { Badge, Button, Card, EmptyState, IconButton, NavHeader, PageHeader, Screen, SectionHeader, Segmented } from '@/components/ui';
 import { getCategory } from '@/engine/categories';
 import { generateOutfits } from '@/engine/generate';
 import { OCCASION_LABELS } from '@/engine/scoring';
@@ -25,7 +25,7 @@ const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 export default function Plan() {
   const [tab, setTab] = useState<'calendar' | 'trips'>('calendar');
   return (
-    <Screen tabBarSpace>
+    <Screen edges={['top', 'bottom']} header={<NavHeader onBack={() => router.back()} />}>
       <PageHeader
         title="Plan"
         subtitle={tab === 'calendar' ? 'Events and outfits ahead' : 'Pack from your own closet'}

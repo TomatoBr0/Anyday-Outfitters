@@ -13,7 +13,7 @@ const TABS: Record<string, { label: string; icon: IconName }> = {
   index: { label: 'Today', icon: 'today' },
   closet: { label: 'Closet', icon: 'hanger' },
   create: { label: 'Create', icon: 'plus' },
-  plan: { label: 'Plan', icon: 'calendar' },
+  social: { label: 'Social', icon: 'people' },
   profile: { label: 'You', icon: 'user' },
 };
 
@@ -23,7 +23,7 @@ export default function TabLayout() {
       <Tabs.Screen name="index" />
       <Tabs.Screen name="closet" />
       <Tabs.Screen name="create" />
-      <Tabs.Screen name="plan" />
+      <Tabs.Screen name="social" />
       <Tabs.Screen name="profile" />
     </Tabs>
   );

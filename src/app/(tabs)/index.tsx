@@ -13,6 +13,7 @@ import { OCCASION_LABELS } from '@/engine/scoring';
 import type { Recommendation } from '@/engine/types';
 import { useEngineContext } from '@/features/outfits/engineContext';
 import { OutfitBoard, OutfitStrip } from '@/features/outfits/OutfitBoard';
+import { requireProfile } from '@/features/social/components';
 import { WeatherCard } from '@/features/weather/WeatherCard';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -116,9 +117,12 @@ export default function Today() {
 
   const header = (
     <View style={{ paddingTop: space.lg, paddingBottom: space.lg }}>
-      <Text variant="overline" color="textMuted">
-        {formatLongDate(today)}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text variant="overline" color="textMuted">
+          {formatLongDate(today)}
+        </Text>
+        <IconButton icon="calendar" label="Plan ahead: calendar and trips" size={40} onPress={() => router.push('/plan')} />
+      </View>
       <Text variant="display" accessibilityRole="header" style={{ marginTop: 4 }}>
         {greeting()}
         {name ? `, ${name}` : ''}.
@@ -216,6 +220,7 @@ export default function Today() {
                   </View>
                   <View style={{ flexDirection: 'row' }}>
                     <IconButton icon="bookmark" label="Save outfit" onPress={() => save(rec)} />
+                    <IconButton icon="share" label="Share outfit" onPress={() => requireProfile() && router.push({ pathname: '/social/compose', params: { items: rec.itemIds.join(',') } })} />
                     <IconButton icon="refresh" label="New outfit" onPress={regenerate} />
                   </View>
                 </View>

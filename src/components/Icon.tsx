@@ -12,7 +12,8 @@ export type IconName =
   | 'refresh' | 'lock' | 'unlock' | 'swap' | 'camera' | 'image' | 'trash' | 'edit' | 'basket'
   | 'shirt' | 'sun' | 'cloud' | 'rain' | 'snow' | 'wind' | 'fog' | 'storm' | 'pin' | 'suitcase'
   | 'thumbUp' | 'thumbDown' | 'bookmark' | 'bookmarkFill' | 'more' | 'settings' | 'info'
-  | 'rotate' | 'crop' | 'clock' | 'arrowRight' | 'sliders' | 'moon' | 'drop' | 'history' | 'star' | 'sparkles';
+  | 'rotate' | 'crop' | 'clock' | 'arrowRight' | 'sliders' | 'moon' | 'drop' | 'history' | 'star' | 'sparkles'
+  | 'chat' | 'share' | 'bell' | 'flag' | 'block' | 'people' | 'wand';
 
 interface Props {
   name: IconName;
@@ -256,6 +257,30 @@ function render(name: IconName, p: any, f: any) {
       );
     case 'star':
       return <Path {...p} d="m12 4 2.4 5 5.3.7-3.9 3.7 1 5.3L12 16.2l-4.8 2.5 1-5.3-3.9-3.7 5.3-.7L12 4Z" />;
+    case 'chat':
+      return <Path {...p} d="M20 11.5a7.5 7.5 0 0 1-11.2 6.5L4 19.5l1.4-4.3A7.5 7.5 0 1 1 20 11.5Z" />;
+    case 'share':
+      return <Path {...p} d="M12 3.5v11M7.5 8 12 3.5 16.5 8M5 12.5v5.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.5" />;
+    case 'bell':
+      return <Path {...p} d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15l1.5-2ZM10 20.5a2.2 2.2 0 0 0 4 0" />;
+    case 'flag':
+      return <Path {...p} d="M5.5 21V4.5M5.5 4.5h11l-2 4 2 4h-11" />;
+    case 'block':
+      return (
+        <>
+          <Circle {...p} cx={12} cy={12} r={8.5} />
+          <Path {...p} d="m6 6 12 12" />
+        </>
+      );
+    case 'people':
+      return (
+        <>
+          <Circle {...p} cx={9} cy={8.5} r={3.3} />
+          <Path {...p} d="M2.8 19.5c.9-3.1 3.3-4.6 6.2-4.6s5.3 1.5 6.2 4.6M15.5 5.6a3.2 3.2 0 0 1 0 6M17.5 14.9c1.8.6 3.1 2.1 3.7 4.6" />
+        </>
+      );
+    case 'wand':
+      return <Path {...p} d="m4 20 11-11M14 4v3M17.5 5.5l-2 2M20 10h-3M18.5 13.5l-2-2M9.5 5.5l2 2" />;
     case 'sparkles':
       return <Path {...p} d="M12 4v4M12 16v4M4 12h4M16 12h4M6.5 6.5l2 2M15.5 15.5l2 2M6.5 17.5l2-2M15.5 8.5l2-2" />;
   }

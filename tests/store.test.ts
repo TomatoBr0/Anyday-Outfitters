@@ -8,7 +8,7 @@ import { migrate } from '@/storage/migrations';
 import { emptyData } from '@/storage/repository';
 import { useStore, flushPersistence } from '@/state/store';
 
-jest.mock('@react-native-async-storage/async-storage', () => require('@react-native-async-storage/async-storage/jest/async-storage-mock'));
+jest.mock('@react-native-async-storage/async-storage', () => jest.requireActual('@react-native-async-storage/async-storage/jest/async-storage-mock'));
 jest.mock('@/services/images', () => ({ deleteImage: jest.fn(), deleteAllImages: jest.fn(), resolveImage: (p?: string) => p }));
 let mockN = 0;
 jest.mock('@/utils/id', () => ({ newId: () => `id-${++mockN}` }));

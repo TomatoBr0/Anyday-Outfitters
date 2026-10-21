@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ToastHost } from '@/components/Toast';
+import { useSocial } from '@/state/social';
 import { flushPersistence, useStore } from '@/state/store';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 
@@ -25,10 +26,13 @@ export default function RootLayout() {
     Inter_600SemiBold,
     Inter_700Bold,
   });
-  const hydrated = useStore((s) => s.hydrated);
+  const coreReady = useStore((s) => s.hydrated);
+  const socialReady = useSocial((s) => s.hydrated);
+  const hydrated = coreReady && socialReady;
 
   useEffect(() => {
     useStore.getState().hydrate();
+    useSocial.getState().hydrate();
     const sub = AppState.addEventListener('change', (st) => {
       if (st !== 'active') flushPersistence();
       else useStore.getState().refreshWeather();
@@ -86,6 +90,8 @@ function Navigator() {
         <Stack.Screen name="item/editor" options={{ presentation: 'modal' }} />
         <Stack.Screen name="event/edit" options={{ presentation: 'modal' }} />
         <Stack.Screen name="trip/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="social/compose" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="social/edit-profile" options={{ presentation: 'modal' }} />
       </Stack>
       <ToastHost />
     </NavThemeProvider>

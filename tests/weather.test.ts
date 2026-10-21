@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { conditionFromCode, getForecast, parseForecast, seasonalEstimate, snapshotFor } from '@/services/weather';
 
-jest.mock('@react-native-async-storage/async-storage', () => require('@react-native-async-storage/async-storage/jest/async-storage-mock'));
+jest.mock('@react-native-async-storage/async-storage', () => jest.requireActual('@react-native-async-storage/async-storage/jest/async-storage-mock'));
 
 const sample = {
   current: { temperature_2m: 12, apparent_temperature: 10, weather_code: 61, wind_speed_10m: 22, is_day: 1 },

@@ -9,6 +9,7 @@ import { Badge, Card, ListRow, PageHeader, Screen, SectionHeader, Segmented, Tog
 import { BRAND } from '@/config/brand';
 import { getColor } from '@/engine/colors';
 import { STYLE_LABELS } from '@/engine/scoring';
+import { useSocial } from '@/state/social';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
@@ -21,6 +22,7 @@ export default function Profile() {
   const logs = useStore((s) => s.wearLogs);
   const prefs = useStore((s) => s.preferences);
   const trips = useStore((s) => s.trips);
+  const socialJoined = useSocial((s) => s.joined);
 
   const insights = useMemo(() => {
     const worn = items.filter((i) => i.wearCount > 0);
@@ -82,12 +84,19 @@ export default function Profile() {
         </Card>
       )}
 
+      <SectionHeader title="Social" />
+      <Card padded={false} style={{ paddingHorizontal: space.lg }}>
+        <ListRow first icon="people" title={socialJoined ? 'My social profile' : 'Create a social profile'} subtitle="Posts, followers, saved inspiration" onPress={() => router.push(socialJoined ? { pathname: '/social/user/[id]', params: { id: 'me' } } : '/social/edit-profile')} />
+        <ListRow icon="bookmark" title="Saved inspiration" onPress={() => router.push('/social/saved')} />
+        <ListRow icon="settings" title="Social settings" subtitle="Privacy, blocked accounts, activity" onPress={() => router.push('/social/settings')} />
+      </Card>
+
       <SectionHeader title="Your outfits" />
       <Card padded={false} style={{ paddingHorizontal: space.lg }}>
         <ListRow first icon="bookmark" title="Saved outfits" value={String(saved)} onPress={() => router.push('/outfits')} />
         <ListRow icon="history" title="Outfit history" value={String(logs.length)} onPress={() => router.push('/history')} />
         <ListRow icon="basket" title="Laundry" value={dirty ? `${dirty} in hamper` : 'All clean'} onPress={() => router.push('/laundry')} />
-        <ListRow icon="suitcase" title="Trips" value={String(trips.length)} onPress={() => router.push('/plan')} />
+        <ListRow icon="calendar" title="Calendar & trips" value={String(trips.length)} onPress={() => router.push('/plan')} />
       </Card>
 
       <SectionHeader title="Personalization" />

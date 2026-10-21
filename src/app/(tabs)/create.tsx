@@ -16,6 +16,7 @@ import { generateOutfits, scoreOutfit, swapCandidates } from '@/engine/generate'
 import { OCCASION_LABELS, buildAffinity } from '@/engine/scoring';
 import { useEngineContext } from '@/features/outfits/engineContext';
 import { OutfitBoard } from '@/features/outfits/OutfitBoard';
+import { requireProfile } from '@/features/social/components';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
@@ -296,6 +297,9 @@ function Builder({ params }: { params: Params }) {
             <Button label={event ? 'Use for event' : 'Save'} icon={event ? 'calendar' : 'bookmark'} variant={event ? 'primary' : 'secondary'} style={{ flex: 1 }} onPress={save} />
             {!event && <Button label="Wear today" icon="check" style={{ flex: 1 }} onPress={wear} />}
           </View>
+          {!event && (
+            <Button label="Share outfit" icon="share" variant="ghost" style={{ marginTop: space.sm }} onPress={() => requireProfile() && router.push({ pathname: '/social/compose', params: { items: current.map((i) => i.id).join(',') } })} />
+          )}
         </Card>
       )}
     </Screen>
