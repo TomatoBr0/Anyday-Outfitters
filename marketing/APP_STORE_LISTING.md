@@ -39,6 +39,13 @@ YOUR OUTFITS, READY
 • Plan outfits for interviews, dates and events ahead of time.
 • Build packing lists for trips from your own closet, using the destination forecast.
 
+SEE IT. RECREATE IT.  [publish this section only once the shared social backend is live]
+• Browse outfits from friends and the Getup community.
+• Tap “Recreate with my closet” and get the closest match from clothes you own, labelled honestly: exact, close, stand-in or missing.
+• Share your own fits with photos, style tags and optional item tags.
+• Save inspiration into private collections.
+• Private profiles by default, one-tap report and block, and location data removed from photos.
+
 LAUNDRY THAT MATCHES REAL LIFE
 • Set how many wears each piece lasts: a tee after one, jeans after five, a coat after twenty.
 • Clear the hamper in one tap. Dirty clothes are never suggested.
@@ -55,7 +62,7 @@ Weather data by Open-Meteo.com.
 **What's New (v0.1.0):** First release. Get up. Get dressed. Get going.
 
 **Category:** Lifestyle (primary), Productivity (secondary)
-**Age rating:** Lowest tier expected (no user-generated sharing, no objectionable content). Answer Apple's current questionnaire.
+**Age rating:** With social enabled, the app has user-generated content and user-to-user communication. Answer Apple's questionnaire accordingly; expect a higher tier than the wardrobe-only build, and meet Guideline 1.2 (see `docs/UGC_STORE_REQUIREMENTS.md`). Answer Apple's current questionnaire.
 **Support URL:** `https://<domain>/support` · **Privacy URL:** `https://<domain>/privacy` (from `website/`)
 
 **Screenshots (6.9", 1290×2796):** `marketing/app-store/01–05*.png`
@@ -64,6 +71,8 @@ Weather data by Open-Meteo.com.
 3. Build around what you love.
 4. Ready for what's next.
 5. Wear more of what you own.
+6. See it. *Recreate it.* (`06-recreate.png`, after the social launch)
+7. Share your style. (`07-social.png`, after the social launch)
 
 ## Google Play
 

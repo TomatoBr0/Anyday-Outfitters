@@ -16,7 +16,7 @@ const audio = opt('--audio');
 const [W, H] = format === 'vertical' ? [1080, 1920] : [1920, 1080];
 
 // Teaser = hand-picked cuts from the main timeline (15 s total).
-const segments = teaser ? [[5.8, 9.3], [18.2, 23.7], [28.6, 31.1], [36.5, 40]] : [[0, 40]];
+const segments = teaser ? [[5.8, 9.0], [18.4, 21.4], [25.3, 31.3], [42.2, 45]] : [[0, 45]];
 const times = [];
 for (const [a, b] of segments) for (let t = a; t < b - 1e-6; t += 1 / fps) times.push(+t.toFixed(4));
 

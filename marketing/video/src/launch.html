@@ -65,6 +65,9 @@ body { background: var(--linen); font-family: Inter; color: var(--ink); position
       <img id="imgClear" src="../captures/today-clear.png">
       <img id="imgRain" src="../captures/today-rain.png">
       <img id="imgDressed" src="../captures/dressed.png">
+      <img id="imgSocial" src="../captures/social-tall.png">
+      <img id="imgPost" src="../captures/social-post.png">
+      <img id="imgRecreate" src="../captures/recreate.png">
     </div></div>
     <div id="chips"></div>
     <div id="ripple" class="ripple"></div>
@@ -73,7 +76,7 @@ body { background: var(--linen); font-family: Inter; color: var(--ink); position
   <!-- Scene 6: end card -->
   <div id="s6" class="layer center" style="text-align: center">
     <img id="endLogo" src="../../../branding/logo/getup-lockup-horizontal.svg">
-    <div id="endTag" class="display" style="font-size: 76px; margin-top: 46px">Get up. Get dressed.<br><span class="ital">Get going.</span></div>
+    <div id="endTag" class="display" style="font-size: 76px; margin-top: 46px">See it. <span class="ital">Recreate it.</span><br>Get going.</div>
     <div id="endCta" style="margin-top: 50px; font: 600 34px Inter; background: var(--ink); color: var(--cream); padding: 24px 46px; border-radius: 999px">Coming soon to iPhone</div>
   </div>
 
@@ -128,21 +131,23 @@ if (V) { head.style.cssText += `left:80px;right:80px;top:170px;text-align:center
 else { head.style.cssText += `left:160px;width:900px;top:330px;font-size:104px`; sub.style.cssText += `left:160px;width:760px;top:580px`; }
 
 const SCENES = [
-  { a: 10, b: 18, head: 'Your closet,<br><span class="ital">organized.</span>', sub: 'Snap what you own. Search it, filter it, see what’s clean.' },
-  { a: 18, b: 28, head: 'An outfit,<br><span class="ital">ready.</span>', sub: 'Built from your clothes — for today’s weather and plans.' },
-  { a: 28, b: 35, head: 'One tap.<br><span class="ital">Out the door.</span>', sub: 'Wear it, and Getup tracks laundry and history for you.' },
+  { a: 10, b: 14.6, head: 'Your closet,<br><span class="ital">organized.</span>', sub: 'Snap what you own. Search it, filter it, see what’s clean.' },
+  { a: 14.6, b: 18, head: 'An outfit,<br><span class="ital">ready.</span>', sub: 'Built from your clothes, for today’s weather and plans.' },
+  { a: 18, b: 25, head: 'Share your<br><span class="ital">style.</span>', sub: 'Follow friends, discover looks, post your own fits.' },
+  { a: 25, b: 38, head: 'See it.<br><span class="ital">Recreate it.</span>', sub: 'Getup finds the closest match in your own closet.' },
 ];
 const CHIPS = [
-  // [text, start, end, xFracOfPhone, yFracOfPhone]
-  ['27 pieces, all yours', 11.6, 17.6, -0.18, 0.18],
-  ['Search & filter', 12.6, 17.6, 0.62, 0.42],
-  ['Knows what’s clean', 13.6, 17.6, -0.22, 0.68],
-  ['55° and clear', 19.2, 22.6, 0.55, 0.12],
-  ['Only clean clothes', 20.2, 22.6, -0.25, 0.45],
-  ['Rain? Shell + boots.', 23.4, 27.7, 0.5, 0.12],
-  ['Explains every pick', 24.8, 27.7, -0.24, 0.8],
-  ['Laundry tracked', 30.2, 34.6, 0.6, 0.3],
-  ['History saved', 31.0, 34.6, -0.2, 0.62],
+  ['27 pieces, all yours', 10.8, 14.4, -0.18, 0.18],
+  ['Knows what’s clean', 11.8, 14.4, 0.55, 0.5],
+  ['Rain? Shell + boots.', 15.2, 17.8, 0.5, 0.12],
+  ['Explains every pick', 16.0, 17.8, -0.24, 0.78],
+  ['Follow friends', 19.2, 24.7, 0.58, 0.2],
+  ['Discover looks', 20.2, 24.7, -0.22, 0.5],
+  ['Private by default', 21.2, 24.7, 0.5, 0.78],
+  ['88% similar', 28.2, 37.6, 0.6, 0.06],
+  ['Honest match labels', 29.4, 37.6, -0.26, 0.3],
+  ['Swap any piece', 30.6, 37.6, 0.58, 0.55],
+  ['Wear it or save it', 32.0, 37.6, -0.22, 0.82],
 ];
 const chipEls = CHIPS.map(([text]) => {
   const c = document.createElement('div');
@@ -188,9 +193,9 @@ function seek(t) {
   $('tag').innerHTML = words.map((w, i) => `<span style="opacity:${ease(prog(t, 8.1 + i * 0.4, 8.6 + i * 0.4))};display:inline-block;transform:translateY(${(1 - ease(prog(t, 8.1 + i * 0.4, 8.6 + i * 0.4))) * 20}px)">${w}</span>`).join(' ');
 
   // ----- Scenes 3–5 (10–35.4)
-  const pr = t >= 10 && t < 35.6 ? Math.min(ease(prog(t, 10, 10.6)), 1 - prog(t, 35, 35.6)) : 0;
+  const pr = t >= 10 && t < 38.6 ? Math.min(ease(prog(t, 10, 10.6)), 1 - prog(t, 38, 38.6)) : 0;
   show($('product'), pr);
-  const sc = SCENES.find((s) => t >= s.a && t < s.b) || SCENES[2];
+  const sc = SCENES.find((s) => t >= s.a && t < s.b) || SCENES[3];
   const local = fade(t, sc.a + 0.1, sc.a + 0.7, sc.b - 0.5, sc.b);
   head.innerHTML = sc.head; sub.innerHTML = sc.sub;
   head.style.opacity = local; sub.style.opacity = local * 0.95;
@@ -200,14 +205,19 @@ function seek(t) {
   phone.style.top = phoneY + (1 - enter) * (V ? 900 : 700) + 'px';
   phone.style.transform = `rotate(${V ? 0 : 3}deg)`;
   // screens
-  const closetOn = t < 18.2 ? 1 : 1 - prog(t, 18.0, 18.5);
-  const clearOn = Math.min(prog(t, 18.0, 18.5), 1 - prog(t, 22.7, 23.2));
-  const rainOn = Math.min(prog(t, 22.7, 23.2), 1 - prog(t, 29.3, 29.7));
-  const dressedOn = prog(t, 29.3, 29.7);
-  show($('imgCloset'), closetOn); show($('imgClear'), clearOn); show($('imgRain'), rainOn); show($('imgDressed'), dressedOn);
-  const scroll = inOut(prog(t, 12.0, 17.2));
-  const tallH = phoneW * 2600 / 932 - 28; // rendered height of the tall capture
+  const win = (a, b) => Math.min(prog(t, a - 0.4, a), 1 - prog(t, b - 0.4, b));
+  show($('imgCloset'), t < 10.5 ? 1 : win(10, 14.8));
+  show($('imgClear'), 0);
+  show($('imgRain'), win(14.8, 18.2));
+  show($('imgDressed'), 0);
+  show($('imgSocial'), win(18.2, 25.2));
+  show($('imgPost'), win(25.2, 27.2));
+  show($('imgRecreate'), win(27.2, 39));
+  const scroll = inOut(prog(t, 10.8, 14.3));
+  const tallH = phoneW * 2600 / 932 - 28;
   $('imgCloset').style.transform = `translateY(${-scroll * (tallH - phoneH * 0.95)}px)`;
+  const socialH = phoneW * 2400 / 932 - 28;
+  $('imgSocial').style.transform = `translateY(${-inOut(prog(t, 19, 24.6)) * (socialH - phoneH * 0.95)}px)`;
   // chips
   CHIPS.forEach(([, a, b, fx, fy], i) => {
     const o = fade(t, a, a + 0.4, b - 0.3, b);
@@ -218,22 +228,22 @@ function seek(t) {
     el.style.transform = `scale(${0.85 + 0.15 * back(prog(t, a, a + 0.45))})`;
   });
   // tap ripple on "Wear today" (≈ 69% down the screen, left half)
-  const rp = prog(t, 28.9, 29.6);
+  const rp = prog(t, 26.2, 26.9);
   const rip = $('ripple');
   const rs = 40 + rp * 220;
   rip.style.width = rip.style.height = rs + 'px';
-  rip.style.left = phoneX + phoneW * 0.36 - rs / 2 + 'px';
-  rip.style.top = phoneY + phoneH * 0.462 - rs / 2 + 'px';
+  rip.style.left = phoneX + phoneW * 0.5 - rs / 2 + 'px';
+  rip.style.top = phoneY + phoneH * 0.5 - rs / 2 + 'px';
   rip.style.opacity = rp > 0 && rp < 1 ? 1 - rp : 0;
 
   // ----- Scene 6 end card (35–40)
-  const e = ease(prog(t, 35.4, 36.2));
-  show($('s6'), t >= 35.3 ? e : 0);
+  const e = ease(prog(t, 38.4, 39.2));
+  show($('s6'), t >= 38.3 ? e : 0);
   $('endLogo').style.width = (V ? 620 : 640) + 'px';
   $('endLogo').style.transform = `translateY(${(1 - e) * 30}px)`;
-  $('endTag').style.opacity = ease(prog(t, 36.2, 37.0));
-  $('endCta').style.opacity = ease(prog(t, 37.0, 37.7));
-  $('endCta').style.transform = `scale(${0.9 + 0.1 * back(prog(t, 37.0, 37.7))})`;
+  $('endTag').style.opacity = ease(prog(t, 39.2, 40.0));
+  $('endCta').style.opacity = ease(prog(t, 40.0, 40.7));
+  $('endCta').style.transform = `scale(${0.9 + 0.1 * back(prog(t, 40.0, 40.7))})`;
 }
 window.seek = seek;
 window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map((i) => (i.complete ? 1 : new Promise((r) => (i.onload = r))))));

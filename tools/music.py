@@ -59,7 +59,7 @@ arp *= np.clip((t - 6.0) / 2.0, 0, 1) * np.clip((dur - 3.0 - t) / 1.5, 0, 1)
 
 # Accents: soft low "bloom" at the reveal (6.0 s) and end card (35.4 s); rising swell into the reveal.
 acc = np.zeros(n)
-for at, base in ((6.0, 41), (35.4, 41)):
+for at, base in ((6.0, 41), (38.4, 41)):
     a = int(at * SR); seg = np.arange(min(int(3 * SR), n - a)) / SR
     acc[a:a + len(seg)] += (np.sin(2 * np.pi * midi(base) * seg) + 0.5 * np.sin(2 * np.pi * midi(base + 12) * seg)) * np.exp(-seg * 1.4) * 0.22
 swell = np.sin(2 * np.pi * midi(65) * t) * np.clip((t - 3.8) / 2.2, 0, 1) ** 2 * (t < 6.05) * 0.05

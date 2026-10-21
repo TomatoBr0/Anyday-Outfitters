@@ -1,7 +1,7 @@
 # Getup — your closet, your weather, your outfit
 
 > **Get up. Get dressed. Get going.**
-> Getup turns the clothes you already own into a ready-to-wear outfit every morning. It weighs the weather, your plans, what's in the laundry and what you've worn lately.
+> Getup turns the clothes you already own into a ready-to-wear outfit every morning. It weighs the weather, your plans, what's in the laundry and what you've worn lately. **Getup Social** adds outfit sharing and *Recreate With My Closet*: see a look you like, and get it from your own clothes.
 
 *Working title was "AnyDay Outfitters". "Getup" is the provisional brand; see [`branding/NAMING.md`](branding/NAMING.md). To rename it, see [`docs/RENAMING.md`](docs/RENAMING.md).*
 
@@ -19,7 +19,10 @@
 | `src/storage/` | Local persistence (repository abstraction + migrations) |
 | `src/state/` | App state (zustand) with debounced write-through persistence |
 | `src/theme/` | Design tokens (colors, type, spacing, motion) and light/dark theming |
-| `tests/` | Jest unit/integration tests (53 tests) |
+| `src/social/`, `src/state/social.ts` | Social rules, demo backend, Supabase adapter |
+| `supabase/` | Shared-backend schema (RLS) + server-side tests |
+| `bench/` | Reproducible recommendation benchmark (deterministic vs Jev) |
+| `tests/` | Jest unit/integration tests (77 tests) |
 | `tools/` | Asset rendering + end-to-end QA scripts (Playwright). Not shipped in the app |
 | `branding/` | Naming research, brand guidelines, logo SVGs, exported icons, tokens |
 | `website/` | Marketing landing page (static, ready for Cloudflare Pages) |
@@ -57,7 +60,7 @@ No Xcode or Mac is needed for development. Publishing to the App Store later use
 
 ```powershell
 npx expo start --web     # browser preview (camera/photos/haptics are limited on web)
-npm test                 # 53 Jest tests (engine, color detection, store, weather)
+npm test                 # 77 Jest tests (engine, recreate, social, store, weather, color)
 npm run typecheck        # TypeScript
 npm run lint             # ESLint (expo config + React Compiler rules)
 npm run check            # all three
@@ -72,5 +75,7 @@ npm run check            # all three
 - **Photos → color.** The main color is suggested on-device: the photo is resized to 32×32, the PNG is decoded in JS, the background is subtracted, and colors are matched to the palette. It's a suggestion the user confirms. Garment type isn't auto-detected yet, and the UI says so.
 
 ## Project status
+
+Social details: [`docs/SOCIAL.md`](docs/SOCIAL.md). Jev evaluation: [`docs/JEV_RESEARCH.md`](docs/JEV_RESEARCH.md).
 
 See [`PROGRESS.md`](PROGRESS.md) for what's done, test results, known issues and the exact next steps. [`CHANGELOG.md`](CHANGELOG.md) has the version history.

@@ -32,7 +32,7 @@ export const signOut = () => supabase().auth.signOut();
 export const deleteMyAccount = () => supabase().rpc('delete_my_account');
 
 // ---- feed (RLS decides visibility; we only order and paginate)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 function toPost(r: any): Post {
   return {
     id: r.id,
@@ -40,7 +40,7 @@ function toPost(r: any): Post {
     images: (r.post_images ?? []).sort((a: { position: number }, b: { position: number }) => a.position - b.position).map((i: { path: string }) => i.path),
     caption: r.caption,
     styleTags: r.style_tags,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     items: (r.post_item_tags ?? []).map((t: any) => ({ categoryId: t.category_id, primaryColor: t.primary_color, secondaryColors: t.secondary_colors, pattern: t.pattern, fit: t.fit, styleTags: t.style_tags, formality: t.formality, warmth: t.warmth, brand: t.brand, productName: t.product_name })),
     audience: r.audience,
     commentsDisabled: r.comments_disabled,

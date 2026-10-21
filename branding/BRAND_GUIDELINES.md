@@ -7,6 +7,7 @@
 **Promise.** Open the app. Get dressed. Get on with your day.
 
 **Tagline.** *Get up. Get dressed. Get going.*
+Social line: *See it. Recreate it. From your own closet.*
 Alternates: "Your closet, styled." · "Dressed in one tap." · "Wear what you own. Better."
 
 **Personality.** A sharp friend with good taste: warm, quick, a little witty, never judgmental. Confident, not pushy. Fashion-literate, not exclusive.
@@ -87,5 +88,7 @@ Custom 24-grid line icons with a 1.75 stroke and round caps and joins (`src/comp
 | "6 pieces in the hamper." | "You have 6 dirty items." |
 | "Got it — showing something else." | "Feedback submitted successfully." |
 | "Brings back your cream sweater." | "Item #4823 has low utilization." |
+| "Close match: grey vs cream." | "Perfect match!" (when it isn't) |
+| "You're all caught up." | "Keep scrolling for more!" |
 
 Short sentences. Second person. Light wit, never sarcasm about someone's body or style. Say what something does, not what it is.

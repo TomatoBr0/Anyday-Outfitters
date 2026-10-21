@@ -25,7 +25,15 @@ Jobs to be done:
 3. "Make sure I don't show up underdressed or soaked."
 4. "Help me pack without overpacking."
 
-## Positioning
+## Positioning (updated for social)
+
+Getup is now five things in one: **wardrobe organization, outfit recommendations, inspiration, outfit sharing, and recreating looks with clothes you own.** The social side is built around one differentiator nobody in the category owns:
+
+> **See an outfit you like. Recreate it with your own closet.**
+
+Social apps show you outfits you'd have to buy. Getup shows you how to get that look from what you already have, with an honest similarity score. That keeps the brand anti-haul and sustainable without preaching, and it gives people a reason to post (their look is useful to others) beyond chasing likes.
+
+### Original positioning (wardrobe)
 
 > **For** people who want to look good without spending the morning on it, **Getup** is the outfit planner that **dresses you from your own closet in one tap**, accounting for weather, plans and laundry. **Unlike** stylist apps that push shopping or need cloud AI, Getup works offline, keeps your photos on your phone, and explains every pick.
 
@@ -37,9 +45,16 @@ Jobs to be done:
 4. **Private by architecture.** No account and no server; data is on-device.
 5. **Free where it counts.** The full daily loop is free.
 
+## Social principles (brand-level)
+
+- **Not engagement-maximizing.** Discover ranks by style match, closet overlap and recency, never by likes. Feeds end.
+- **Private by default** for new profiles; brands and item names are hidden unless the user chooses to share them.
+- **Kind by design.** Community guidelines put "be kind about bodies and style" first. Report and block are one tap away.
+
 ## Growth hypotheses to test
 
 - **TikTok / Reels "closet clean-out" format**: "I let an app dress me for a week."
 - **Campus ambassadors** at the start of the semester (packing lists for move-in).
+- **"Recreate challenge":** post a fit, and friends recreate it from their closets and post their versions (needs the shared backend)
 - **Shareable outfit cards** (planned): a styled image of today's fit with a subtle "via Getup".
 - **App Store search terms** in priority order: *outfit planner, what to wear, closet organizer, wardrobe app, outfit ideas, packing list*.

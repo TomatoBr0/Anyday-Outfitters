@@ -77,3 +77,21 @@ The name should be short, memorable and fashion-relevant without saying "AI". It
 - A formal trademark search and filing (USPTO plus target markets): **attorney, paid**.
 - Domain purchase: **paid**. Suggested: `getupcloset.com` plus `getup.style` if available (rate-limited during the check).
 - Social handle checks on Instagram and TikTok. These weren't possible from this environment; check `@getupapp`, `@getup.closet` and `@wearthegetup`.
+
+## Addendum: does the name still work with social? (2026-10-21)
+
+The product now combines a wardrobe assistant, outfit recommendations, inspiration, outfit sharing and recreating looks. I re-scored the finalists for the community side:
+
+| | Getup | Kitted | Tuck |
+|---|---|---|---|
+| Works as a verb or noun people say when posting | ✅ "Post your getup", "#getup", "today's getup" | ✅ "kitted out" | ⚠️ awkward |
+| Sounds like a community, not a retailer | ✅ | ✅ | ✅ |
+| Still fits a private AI wardrobe | ✅ | ✅ | ⚠️ |
+| Handle crowding (GetUp alarm apps, GET UP apparel mark) | ⚠️ unchanged | ✅ | ✅ |
+
+**Decision: keep Getup.** "Getup" is literally the word for the thing people share, so social strengthens the name. The trademark caveat is unchanged; Kitted remains the fallback.
+
+Updated taglines:
+- Primary (unchanged): **Get up. Get dressed. Get going.**
+- Social / recreate line: **See it. Recreate it. From your own closet.**
+- Short: **Your closet, your style, your crew.**

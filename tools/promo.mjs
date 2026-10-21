@@ -30,6 +30,8 @@ const jobs = [
   ['app-store/03-build-around.png', 1290, 2796, store('Build around<br>what you love.', 'Lock a favorite piece. Getup styles the rest.', '03-create.png')],
   ['app-store/04-plan-ahead.png', 1290, 2796, store('Ready for<br>what’s next.', 'Plan outfits for events, with the forecast built in.', '04-plan.png')],
   ['app-store/05-wear-more.png', 1290, 2796, store('Wear more of<br>what you own.', 'See what you actually wear — and rediscover the rest.', '06-profile.png')],
+  ['app-store/06-recreate.png', 1290, 2796, store('See it.<br><i style="font-weight:400;color:#A24C31">Recreate it.</i>', 'Love a look? Get it from clothes you already own.', '08-recreate.png')],
+  ['app-store/07-social.png', 1290, 2796, store('Share your<br>style.', 'Follow friends, discover looks, save inspiration.', '09-social.png')],
   ['play/feature-graphic-1024x500.png', 1024, 500, `<html><head><style>${fontCss}</style></head><body style="width:1024px;height:500px;background:${C.linen};display:flex;align-items:center;overflow:hidden;padding-left:70px;gap:40px">
     <div style="flex:1"><div style="width:250px">${mark}</div><div style="font-family:Fraunces;font-weight:600;font-size:54px;line-height:1.05;margin-top:26px;color:${C.ink}">Get up. Get dressed.<br><i style="font-weight:400;color:${C.clay}">Get going.</i></div></div>
     <div style="align-self:flex-start;margin-top:60px;margin-right:70px">${phone('01-today.png', 260)}</div></body></html>`],
@@ -41,6 +43,11 @@ const jobs = [
     <div style="font-family:Fraunces;font-weight:600;font-size:84px;line-height:1.04;margin-top:70px;max-width:470px">What should I wear today?</div>
     <div style="font-size:34px;line-height:1.4;color:#A39B8F;margin-top:30px;max-width:420px">Answered before your coffee’s ready.</div>
     <div style="position:absolute;right:70px;top:300px">${phone('01-today.png', 450)}</div></body></html>`],
+  ['social/instagram-recreate-1080x1350.png', 1080, 1350, `<html><head><style>${fontCss}</style></head><body style="width:1080px;height:1350px;background:${C.linen};color:${C.ink};padding:90px;overflow:hidden;position:relative">
+    <div style="width:240px">${mark}</div>
+    <div style="font-family:Fraunces;font-weight:600;font-size:96px;line-height:1.02;margin-top:70px;max-width:470px">See it.<br><i style="font-weight:400;color:${C.clay}">Recreate it.</i></div>
+    <div style="font-size:34px;line-height:1.4;color:#5E5850;margin-top:30px;max-width:420px">Love a look in the feed? Get it from clothes you already own.</div>
+    <div style="position:absolute;right:70px;top:300px">${phone('08-recreate.png', 450)}</div></body></html>`],
   ['social/story-1080x1920.png', 1080, 1920, `<html><head><style>${fontCss}</style></head><body style="width:1080px;height:1920px;background:${C.linen};padding:120px 90px;overflow:hidden;display:flex;flex-direction:column;align-items:center">
     <div style="width:300px">${mark}</div>
     <div style="font-family:Fraunces;font-weight:600;font-size:104px;line-height:1.02;margin-top:70px;text-align:center;color:${C.ink}">Get up.<br>Get dressed.<br><i style="font-weight:400;color:${C.clay}">Get going.</i></div>

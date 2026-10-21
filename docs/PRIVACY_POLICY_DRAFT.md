@@ -20,6 +20,18 @@ The data you create stays **on your device**:
 | Preferences (styles, fit, temperature comfort) | The app's private storage | Personalizing suggestions |
 | Location (if you allow it), rounded to about 1 km | The app's private storage | Local weather |
 
+## Getup Social (optional; applies only if you create a social profile)
+
+> In the current preview, social data stays on your device (demo mode). This section describes the shared service once it launches.
+
+- **What we store on our servers:** your username, display name, optional bio and photo, the style tags you choose to show, the posts you publish (photos, caption, tags), comments, likes, follows, saves, collections, blocks and reports.
+- **What we don't:** your private closet, outfit history, laundry status, location and preferences stay on your device, unless you separately opt in to sync (not available yet).
+- **Visibility:** profiles are private by default. Each post is public, followers-only or only you. Server-side access rules enforce this.
+- **Photos:** location and camera metadata are removed on your device before upload. Media is stored in private storage and served by short-lived links.
+- **Safety:** reports are reviewed by moderators, who can remove content or suspend accounts. Blocking hides your content from the blocked account.
+- **Deletion:** you can delete your account in the app. Your profile, posts, comments, likes and follows are deleted with it.
+- **Processor:** [Supabase, region TBD]. [Age requirement and parental consent flow: TBD with counsel.]
+
 ## Third parties
 
 - **Weather and city search: Open-Meteo** (open-meteo.com). To get a forecast, the app sends your approximate coordinates (rounded to about 1 km) or the city name you type. No identifier is sent. Open-Meteo's own privacy policy applies to those requests. [Update if the provider changes.]

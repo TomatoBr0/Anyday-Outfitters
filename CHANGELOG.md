@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.0 — 2026-10-21 (unreleased)
+
+### Social (demo backend)
+- New **Social** tab (Following / Discover) replaces Plan on the tab bar. Plan now opens from Today and Profile.
+- Feed, post detail, comments with replies, likes, saves and collections, search, profiles, follow requests, blocking, reporting, activity center, social settings, moderation queue prototype, community guidelines.
+- Compose with camera (front/rear), library (up to 4), crop, caption, style tags, opt-in item tags (brand and name hidden by default), audience, preview, autosaved draft. Photos are re-encoded to strip metadata.
+- Seeded demo accounts, labelled "Demo" and hideable.
+
+### Recreate With My Closet
+- Deterministic similarity engine with honest match levels, reasons, swaps, save and wear.
+
+### Backend
+- Supabase schema with RLS, private storage, rate limits, triggers and account deletion; 31 server-side tests; client adapter (not yet wired).
+
+### Research
+- Jev verified and benchmarked (harness); decision: experiment later behind a flag. Supabase chosen over Firebase. App Store and Play UGC requirements documented.
+
+### Marketing
+- Launch film v2 (45 s plus a 15 s teaser) with social and Recreate scenes; website, store screenshots and listing updated.
+
+
 ## 0.1.0 — 2026-10-21 (MVP, unreleased)
 
 First complete build of **Getup** (working title "AnyDay Outfitters").
