@@ -1,5 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
+import type { BottomTabBarProps } from 'expo-router/tabs';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -29,7 +30,7 @@ export default function TabLayout() {
   );
 }
 
-function TabBar({ state, navigation }: any) {
+function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
   const { colors, scheme } = useTheme();
   const insets = useSafeAreaInsets();
   const bottom = Math.max(insets.bottom, 10);
@@ -48,8 +49,8 @@ function TabBar({ state, navigation }: any) {
           const focused = state.index === index;
           const onPress = () => {
             haptic.tap();
-            const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-            if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
+            const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+            if (!focused && !event.defaultPrevented) navigateToTab(route.key);
           };
           if (route.name === 'create') {
             return (
