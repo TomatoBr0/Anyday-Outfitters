@@ -120,7 +120,7 @@ export default function Social() {
             <Text variant="caption" color="textSubtle" align="center" style={{ padding: space.xl }}>
               You’re all caught up.
             </Text>
-          ) : null
+          ) : undefined
         }
       />
     </View>

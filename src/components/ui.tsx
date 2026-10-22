@@ -9,6 +9,7 @@ import {
   ScrollView,
   Switch,
   TextInput,
+  type TextInputInstance,
   View,
   type PressableProps,
   type ScrollViewProps,
@@ -378,7 +379,7 @@ interface FieldProps extends TextInputProps {
   icon?: IconName;
 }
 
-export const TextField = forwardRef<TextInput, FieldProps>(function TextField({ label, hint, icon, style, ...rest }, ref) {
+export const TextField = forwardRef<TextInputInstance, FieldProps>(function TextField({ label, hint, icon, style, ...rest }, ref) {
   const { colors } = useTheme();
   return (
     <View style={{ gap: 6 }}>

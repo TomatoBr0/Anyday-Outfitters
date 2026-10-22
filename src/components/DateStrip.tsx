@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View, type ScrollViewInstance } from 'react-native';
 
 import { Text } from './Text';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -12,7 +12,7 @@ import { haptic } from '@/utils/haptics';
 export function DateStrip({ value, onChange, start = toISODate(), days = 120, min }: { value: ISODate; onChange: (d: ISODate) => void; start?: ISODate; days?: number; min?: ISODate }) {
   const { colors } = useTheme();
   const list = useMemo(() => Array.from({ length: days }, (_, i) => addDays(start, i)), [start, days]);
-  const ref = useRef<ScrollView>(null);
+  const ref = useRef<ScrollViewInstance>(null);
   const W = 58;
 
   useEffect(() => {

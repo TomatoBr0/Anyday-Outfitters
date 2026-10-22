@@ -2,6 +2,9 @@
 
 ## 0.2.0 — 2026-10-21 (unreleased)
 
+### Platform
+- Upgraded to Expo SDK 58 (React Native 0.88) for the current Expo Go.
+
 ### Social (demo backend)
 - New **Social** tab (Following / Discover) replaces Plan on the tab bar. Plan now opens from Today and Profile.
 - Feed, post detail, comments with replies, likes, saves and collections, search, profiles, follow requests, blocking, reporting, activity center, social settings, moderation queue prototype, community guidelines.

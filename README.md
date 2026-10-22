@@ -47,12 +47,7 @@ npx expo start
 2. Keep the phone and PC on the **same Wi-Fi**, then scan the QR code in the terminal with the iPhone **Camera** app.
 3. If the phone can't reach your PC (a school or office network, or Windows Firewall), run `npx expo start --tunnel`.
 
-**SDK version:** the project targets **Expo SDK 57**, which the App Store version of Expo Go supports as of October 2026. When Expo Go updates to SDK 58 (expected within weeks), it will say the project is incompatible. Upgrade with:
-
-```powershell
-npx expo install expo@^58.0.0 --fix
-npx expo-doctor
-```
+**SDK version:** the project targets **Expo SDK 58** (React Native 0.88), matching the current App Store Expo Go.
 
 No Xcode or Mac is needed for development. Publishing to the App Store later uses EAS Build in the cloud (see [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md)).
 
