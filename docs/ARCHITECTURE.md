@@ -24,7 +24,7 @@
 
 | Decision | Why |
 |---|---|
-| **Expo SDK 57 + Expo Go** | Runs on a physical iPhone from Windows with no Xcode. SDK 57 is what the App Store version of Expo Go supports today. Only Expo Go-bundled native modules are used, so there's no custom dev client |
+| **Expo SDK 58 + Expo Go** | Runs on a physical iPhone from Windows with no Xcode. SDK 58 is what the App Store version of Expo Go supports today. Only Expo Go-bundled native modules are used, so there's no custom dev client |
 | **Expo Router** | File-based routes, typed routes, modals and tabs |
 | **zustand** | Tiny, no provider boilerplate, works with React Compiler; selectors limit re-renders |
 | **One AsyncStorage key per collection** | Writes only touch what changed (debounced 200 ms, flushed on backgrounding). A corrupt collection resets on its own without losing the others (tested) |

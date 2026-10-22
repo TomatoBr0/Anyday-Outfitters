@@ -27,7 +27,7 @@
 ## Google Play
 
 - [ ] Play Console account ($25 one-time). **Paid; needs approval.**
-- [ ] Target **API level 36 (Android 16)** for new apps and updates (deadline Aug 31, 2026; extension possible to Nov 1, 2026). SDK 57/58 templates target this. Verify in the EAS build output.
+- [ ] Target **API level 36 (Android 16)** for new apps and updates (deadline Aug 31, 2026; extension possible to Nov 1, 2026). SDK 58/58 templates target this. Verify in the EAS build output.
 - [ ] Personal developer accounts must run a closed test with at least 12 testers for 14 days before production. Confirm the current rule in Play Console.
 - [ ] Data safety form: mirrors the Apple privacy answers.
 - [ ] Feature graphic 1024×500, icon 512×512 (`marketing/play/`).
