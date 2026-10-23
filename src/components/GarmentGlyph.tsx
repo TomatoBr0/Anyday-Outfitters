@@ -23,6 +23,7 @@ const SHAPES: Record<string, string> = {
   sandal: 'M10 70h80v6H10Z M30 70c0-10 4-18 12-18s12 8 12 18 M56 70c0-8 3-14 9-14s9 6 9 14',
   hat: 'M18 66c0-26 13-40 32-40s32 14 32 40Z',
   bag: 'M18 38h64l-4 50H22Z',
+  sock: 'M36 8h26v52l20 11c7 4 9 12 5 18s-12 8-19 4L42 78c-4-2-6-6-6-10Z',
 };
 
 function shapeFor(categoryId: string): string {
@@ -41,6 +42,7 @@ function shapeFor(categoryId: string): string {
     case 'sandals': return SHAPES.sandal;
     case 'hat': case 'beanie': return SHAPES.hat;
     case 'bag': return SHAPES.bag;
+    case 'socks': return SHAPES.sock;
   }
   if (c.slot === 'bottom') return SHAPES.pants;
   if (c.slot === 'footwear') return SHAPES.sneaker;

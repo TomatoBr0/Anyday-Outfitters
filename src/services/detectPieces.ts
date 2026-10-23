@@ -11,6 +11,9 @@ import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 
 import { allCategories } from '@/engine/categories';
 import { COLORS } from '@/engine/colors';
+import { STYLE_LABELS } from '@/engine/scoring';
+import { FIT_LABELS, PATTERN_LABELS } from '@/features/closet/labels';
+import type { Fit, Formality, Pattern, StyleTag, Warmth } from '@/types/models';
 
 const DETECT_URL = process.env.EXPO_PUBLIC_DETECT_URL;
 export const detectConfigured = !!DETECT_URL;
@@ -26,8 +29,35 @@ export interface FracBox {
 export interface DetectedPiece {
   categoryId: string;
   colorId: string;
+  secondaryColorIds: string[];
   name: string;
+  /** Short refinement, e.g. "Crewneck". */
+  detail: string;
+  pattern: Pattern;
+  /** Empty when fit doesn't apply or can't be seen. */
+  fit: Fit | '';
+  styleTags: StyleTag[];
+  formality: Formality;
+  warmth: Warmth;
+  waterResistant: boolean;
   box: FracBox;
+}
+
+/** Turn a detected piece into the editor's suggestions for that photo. */
+export function hintFrom(p: DetectedPiece) {
+  return {
+    categoryId: p.categoryId,
+    primaryColor: p.colorId,
+    secondaryColors: p.secondaryColorIds,
+    name: p.name,
+    subcategory: p.detail || undefined,
+    pattern: p.pattern,
+    fit: p.fit || undefined,
+    styleTags: p.styleTags,
+    formality: p.formality,
+    warmth: p.warmth,
+    waterResistant: p.waterResistant,
+  };
 }
 
 export async function detectPieces(photo: { uri: string; width: number; height: number }): Promise<DetectedPiece[]> {
@@ -40,7 +70,14 @@ export async function detectPieces(photo: { uri: string; width: number; height: 
   const res = await fetch(`${DETECT_URL.replace(/\/$/, '')}/detect`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ image: small.base64, categories: allCategories().map((c) => c.id), colors: COLORS.map((c) => c.id) }),
+    body: JSON.stringify({
+      image: small.base64,
+      categories: allCategories().map((c) => c.id),
+      colors: COLORS.map((c) => c.id),
+      patterns: Object.keys(PATTERN_LABELS),
+      fits: Object.keys(FIT_LABELS),
+      styles: Object.keys(STYLE_LABELS),
+    }),
   });
   if (!res.ok) throw new Error(`Detection failed (${res.status})`);
   const data = (await res.json()) as { pieces?: DetectedPiece[] };

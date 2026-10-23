@@ -17,7 +17,7 @@ export interface CategoryDef {
   layer?: 'base' | 'mid' | 'outer';
   /** Footwear trait used by weather rules. */
   footwearKind?: 'sneaker' | 'boot' | 'dress' | 'sandal' | 'athletic';
-  accessoryKind?: 'hat' | 'belt' | 'watch' | 'jewelry' | 'bag' | 'sunglasses' | 'scarf';
+  accessoryKind?: 'hat' | 'belt' | 'watch' | 'jewelry' | 'bag' | 'sunglasses' | 'scarf' | 'socks';
 }
 
 export const CATEGORIES: CategoryDef[] = [
@@ -57,6 +57,8 @@ export const CATEGORIES: CategoryDef[] = [
   { id: 'watch', label: 'Watch', group: 'accessories', slot: 'accessory', accessoryKind: 'watch', defaults: { warmth: 1, formality: 3, wearsBeforeWash: 999 } },
   { id: 'jewelry', label: 'Jewelry', group: 'accessories', slot: 'accessory', accessoryKind: 'jewelry', defaults: { warmth: 1, formality: 3, wearsBeforeWash: 999 } },
   { id: 'bag', label: 'Bag', group: 'accessories', slot: 'accessory', accessoryKind: 'bag', defaults: { warmth: 1, formality: 2, wearsBeforeWash: 999 } },
+  // Tracked for the closet and laundry; outfits never pick socks as an accessory.
+  { id: 'socks', label: 'Socks', group: 'accessories', slot: 'accessory', accessoryKind: 'socks', defaults: { warmth: 2, formality: 2, wearsBeforeWash: 1 } },
   { id: 'sunglasses', label: 'Sunglasses', group: 'accessories', slot: 'accessory', accessoryKind: 'sunglasses', defaults: { warmth: 1, formality: 2, wearsBeforeWash: 999 } },
   // Other
   { id: 'dress', label: 'Dress', group: 'other', slot: 'onePiece', defaults: { warmth: 2, formality: 3, wearsBeforeWash: 1 } },

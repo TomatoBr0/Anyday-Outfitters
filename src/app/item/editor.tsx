@@ -14,12 +14,13 @@ import { Icon } from '@/components/Icon';
 import { Text } from '@/components/Text';
 import { toast } from '@/components/Toast';
 import { Badge, Button, Chip, FieldLabel, IconButton, NavHeader, Stepper, TextField, ToggleRow } from '@/components/ui';
-import type { PickedPhoto } from '@/features/closet/picker';
+import type { PhotoHint, PickedPhoto } from '@/features/closet/picker';
 import { FIT_LABELS, FORMALITY_LABELS, PATTERN_LABELS, SEASON_LABELS, WARMTH_LABELS } from '@/features/closet/labels';
 import { GROUP_LABELS, allCategories, getCategory } from '@/engine/categories';
 import { COLORS } from '@/engine/colors';
 import { STYLE_LABELS } from '@/engine/scoring';
 import { suggestColors } from '@/services/colorSuggest';
+import { detectConfigured, detectPieces, hintFrom } from '@/services/detectPieces';
 import { persistImage, processImage, resolveImage } from '@/services/images';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -75,6 +76,8 @@ export default function ItemEditor() {
   const [squareCrop, setSquareCrop] = useState(false);
   const [suggested, setSuggested] = useState<{ primary: string; secondary?: string } | undefined>();
   const [analyzing, setAnalyzing] = useState(!!photo);
+  const [filling, setFilling] = useState(false);
+  const [filled, setFilled] = useState(!!photo?.hint);
   const [saving, setSaving] = useState(false);
   const [more, setMore] = useState(!!existing);
   const [group, setGroup] = useState<CategoryGroup>(existing ? getCategory(existing.categoryId, custom).group : 'tops');
@@ -86,6 +89,7 @@ export default function ItemEditor() {
     setSquareCrop(false);
     setSuggested(undefined);
     setAnalyzing(true);
+    setFilled(!!queue[i]?.hint);
   };
 
   function applyCategory(d: Draft, id: string): Draft {
@@ -102,6 +106,55 @@ export default function ItemEditor() {
     };
   }
 
+  /** Apply suggested details on top of the category's defaults. */
+  function applyHint(d: Draft, hint: PhotoHint): Draft {
+    const next = hint.categoryId ? applyCategory(d, hint.categoryId) : d;
+    const primary = hint.primaryColor ?? next.primaryColor;
+    return {
+      ...next,
+      primaryColor: primary,
+      secondaryColors: (hint.secondaryColors ?? next.secondaryColors).filter((c) => c !== primary),
+      name: hint.name ?? next.name,
+      subcategory: hint.subcategory ?? next.subcategory,
+      pattern: hint.pattern ?? next.pattern,
+      fit: hint.fit ?? next.fit,
+      styleTags: hint.styleTags?.length ? hint.styleTags : next.styleTags,
+      formality: hint.formality ?? next.formality,
+      warmth: hint.warmth ?? next.warmth,
+      waterResistant: hint.waterResistant ?? next.waterResistant,
+    };
+  }
+
+  /** Suggested values count as set, so picking another category keeps them. */
+  function markHinted(hint: PhotoHint) {
+    if (hint.categoryId) setGroup(getCategory(hint.categoryId, custom).group);
+    setTouched((t) => new Set([...t, ...(['formality', 'warmth', 'waterResistant', 'styleTags'] as const).filter((k) => hint[k] !== undefined)]));
+    setFilled(true);
+    setMore(true); // show the suggested fit, pattern and style so they can be checked
+  }
+
+  const fillDetails = async () => {
+    if (!photo) return;
+    setFilling(true);
+    try {
+      const found = await detectPieces(photo);
+      // The biggest piece is the one the photo is about.
+      const main = [...found].sort((a, b) => b.box.width * b.box.height - a.box.width * a.box.height)[0];
+      if (!main) {
+        toast({ message: 'Couldn’t spot a piece in this photo. Fill it in below.', icon: 'info' });
+        return;
+      }
+      const hint = hintFrom(main);
+      setDraft((d) => applyHint(d, hint));
+      markHinted(hint);
+      haptic.success();
+    } catch {
+      toast({ message: 'Couldn’t suggest details right now. Fill them in below.', icon: 'info' });
+    } finally {
+      setFilling(false);
+    }
+  };
+
   // On-device color suggestion for the current photo, plus any suggestions that
   // came with it (category, color and name from piece detection).
   useEffect(() => {
@@ -114,12 +167,9 @@ export default function ItemEditor() {
       if (s) setSuggested(s);
       setDraft((d) => {
         let next = s ? { ...d, primaryColor: s.primary, secondaryColors: s.secondary ? [s.secondary] : [] } : d;
-        if (hint?.primaryColor) next = { ...next, primaryColor: hint.primaryColor, secondaryColors: next.secondaryColors.filter((c) => c !== hint.primaryColor) };
-        if (hint?.categoryId) next = applyCategory(next, hint.categoryId);
-        if (hint?.name) next = { ...next, name: hint.name };
-        return next;
+        return hint ? applyHint(next, hint) : next;
       });
-      if (hint?.categoryId) setGroup(getCategory(hint.categoryId, custom).group);
+      if (hint) markHinted(hint);
     });
     return () => {
       alive = false;
@@ -230,6 +280,22 @@ export default function ItemEditor() {
           )}
         </View>
 
+        {photo && !existing && (filled ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginTop: space.lg, padding: space.md, borderRadius: radius.md, backgroundColor: colors.sunSoft }}>
+            <Icon name="sparkles" size={18} color={colors.sun} />
+            <Text variant="caption" style={{ flex: 1, color: colors.text }}>
+              Details suggested from the photo. Check them and change anything that’s off.
+            </Text>
+          </View>
+        ) : detectConfigured ? (
+          <View style={{ marginTop: space.lg, gap: 4 }}>
+            <Button label="Fill in details for me" icon="sparkles" variant="secondary" loading={filling} onPress={fillDetails} full />
+            <Text variant="caption" color="textSubtle" align="center">
+              Suggests type, colors, fit, style and more. Sends a small copy of this photo; nothing is kept.
+            </Text>
+          </View>
+        ) : null)}
+
         <FieldLabel>Category</FieldLabel>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -space.xl }} contentContainerStyle={{ gap: space.sm, paddingHorizontal: space.xl }}>
           {(Object.keys(GROUP_LABELS) as CategoryGroup[]).map((g) => (
@@ -321,6 +387,10 @@ export default function ItemEditor() {
 
         {more && (
           <View>
+            <View style={{ marginTop: space.lg }}>
+              <TextField label="Detail (optional)" placeholder="e.g. Crewneck, Chelsea, Bomber" value={draft.subcategory ?? ''} onChangeText={(t) => set('subcategory', t || undefined)} maxLength={30} />
+            </View>
+
             <FieldLabel>Pattern</FieldLabel>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
               {(Object.keys(PATTERN_LABELS) as Pattern[]).map((p) => (

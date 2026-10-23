@@ -10,7 +10,7 @@ the "Several pieces" screen.
 ## How it works
 
 - The app sends a ≤1024 px JPEG (base64) plus its own category and colour ids to `POST /detect`.
-- The Worker asks `claude-opus-5-5` (low effort, JSON-schema structured output,
+- The Worker asks `claude-opus-5-5` for category, colours, a short detail, pattern, fit, style tags, dressiness, warmth and water resistance per piece (low effort, JSON-schema structured output,
   server-side refusal fallback) and returns the cleaned-up pieces.
 - The Anthropic key is a Worker secret. It is never in the app.
 - Photos aren't stored. A per-IP rate limit (20/min) caps abuse.

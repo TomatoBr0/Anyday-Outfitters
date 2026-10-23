@@ -1,12 +1,28 @@
 import * as ImagePicker from 'expo-image-picker';
 import { Alert, Linking } from 'react-native';
 
+import type { Fit, Formality, Pattern, StyleTag, Warmth } from '@/types/models';
+
 export interface PickedPhoto {
   uri: string;
   width: number;
   height: number;
   /** Suggestions for this piece (from AI piece detection), applied in the editor. */
-  hint?: { categoryId?: string; primaryColor?: string; name?: string };
+  hint?: PhotoHint;
+}
+
+export interface PhotoHint {
+  categoryId?: string;
+  primaryColor?: string;
+  secondaryColors?: string[];
+  name?: string;
+  subcategory?: string;
+  pattern?: Pattern;
+  fit?: Fit;
+  styleTags?: StyleTag[];
+  formality?: Formality;
+  warmth?: Warmth;
+  waterResistant?: boolean;
 }
 
 function denied(what: string) {

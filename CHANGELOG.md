@@ -10,6 +10,9 @@
 ### Adding clothes
 - **Several pieces in one photo:** snap or pick one photo, drag a box around each piece, and each box becomes its own item with an on-device colour suggestion.
 - **Find pieces for me (optional):** a Cloudflare Worker (`worker/detect`) uses Claude vision to draw the boxes and suggest category, colour and name. Off until deployed and `EXPO_PUBLIC_DETECT_URL` is set.
+- AI suggestions now cover every detail: category, main and accent colours, a short detail (e.g. "Crewneck"), pattern, fit, style tags, dressiness, warmth and water resistance. Single photos get a **Fill in details for me** button. Suggested values survive a category change and open More details for review.
+- New **Socks** category (Accessories): tracked in the closet and laundry, never added to outfits.
+- Editor: new optional **Detail** field.
 - Fixed the profile avatar initial being clipped on iOS.
 
 ### Platform

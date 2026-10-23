@@ -14,7 +14,7 @@ import { toast } from '@/components/Toast';
 import { Badge, Button, NavHeader, Screen } from '@/components/ui';
 import { getCategory } from '@/engine/categories';
 import type { PickedPhoto } from '@/features/closet/picker';
-import { detectConfigured, detectPieces, type FracBox } from '@/services/detectPieces';
+import { detectConfigured, detectPieces, hintFrom, type FracBox } from '@/services/detectPieces';
 import { processImage } from '@/services/images';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -89,7 +89,7 @@ export default function SplitPhoto() {
         return;
       }
       haptic.success();
-      setMarked(found.slice(0, MAX_PIECES).map((p) => ({ key: nextKey.current++, box: p.box, hint: { categoryId: p.categoryId, primaryColor: p.colorId, name: p.name } })));
+      setMarked(found.slice(0, MAX_PIECES).map((p) => ({ key: nextKey.current++, box: p.box, hint: hintFrom(p) })));
     } catch {
       toast({ message: 'Couldn’t find pieces right now. Draw the boxes yourself.', icon: 'info' });
     } finally {

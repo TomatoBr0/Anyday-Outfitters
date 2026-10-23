@@ -66,6 +66,16 @@ describe('outfit structure', () => {
     expect(outfits[0].itemIds.sort()).toEqual([dress.id, flats.id].sort());
   });
 
+  it('tracks socks in the closet without adding them to outfits', () => {
+    const c = basicCloset();
+    const socks = item({ name: 'White socks', categoryId: 'socks', primaryColor: 'white', favorite: true });
+    expect(getCategory('socks').group).toBe('accessories');
+    expect(socks.wearsBeforeWash).toBe(1);
+    const { outfits } = generateOutfits(ctx([...list(c), socks]), { count: 10 });
+    expect(outfits.length).toBeGreaterThan(0);
+    for (const o of outfits) expect(o.itemIds).not.toContain(socks.id);
+  });
+
   it('leaves dresses and skirts out for menswear', () => {
     const c = basicCloset();
     const dress = item({ name: 'Dress', categoryId: 'dress', primaryColor: 'black' });

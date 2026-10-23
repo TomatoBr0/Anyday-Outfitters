@@ -19,6 +19,7 @@ const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, de
 await ctx.addInitScript((p) => { if (!localStorage.getItem('getup:v1:preferences')) localStorage.setItem('getup:v1:preferences', JSON.stringify(p)); }, prefs);
 await ctx.route('**/open-meteo.com/**', (r) => r.fulfill({ status: 503, body: '' }));
 let detectBody;
+const extra = { secondaryColorIds: [], detail: '', pattern: 'solid', fit: 'regular', styleTags: ['casual'], formality: 2, warmth: 2, waterResistant: false };
 const cors = { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type' };
 await ctx.route('http://detect.test/detect', async (r) => {
   if (r.request().method() === 'OPTIONS') return r.fulfill({ status: 204, headers: cors });
@@ -29,9 +30,9 @@ await ctx.route('http://detect.test/detect', async (r) => {
     headers: cors,
     body: JSON.stringify({
       pieces: [
-        { categoryId: 'sweater', colorId: 'navy', name: 'Navy crew sweater', box: { x: 0.06, y: 0.13, width: 0.34, height: 0.5 } },
-        { categoryId: 'jeans', colorId: 'denim', name: 'Light wash jeans', box: { x: 0.51, y: 0.1, width: 0.24, height: 0.81 } },
-        { categoryId: 'sneakers', colorId: 'white', name: 'White sneakers', box: { x: 0.8, y: 0.66, width: 0.16, height: 0.18 } },
+        { ...extra, categoryId: 'sweater', colorId: 'navy', name: 'Navy crew sweater', detail: 'Crewneck', pattern: 'texture', fit: 'relaxed', styleTags: ['classic', 'preppy'], warmth: 3, box: { x: 0.06, y: 0.13, width: 0.34, height: 0.5 } },
+        { ...extra, categoryId: 'jeans', colorId: 'denim', name: 'Light wash jeans', fit: 'slim', box: { x: 0.51, y: 0.1, width: 0.24, height: 0.81 } },
+        { ...extra, categoryId: 'sneakers', colorId: 'white', name: 'White sneakers', fit: '', box: { x: 0.8, y: 0.66, width: 0.16, height: 0.18 } },
       ],
     }),
   });
@@ -86,14 +87,35 @@ await openSplit();
 await page.getByRole('button', { name: 'Find pieces for me' }).click();
 await page.getByText('Add 3 pieces').first().waitFor({ timeout: 15000 }).catch(() => {});
 check('detector boxes become three suggested pieces', await seen('Add 3 pieces') && await seen('Navy crew sweater') && await seen('White sneakers'));
-check('app sends its own category and colour ids', Array.isArray(detectBody?.categories) && detectBody.categories.includes('sweater') && detectBody.colors.includes('navy') && typeof detectBody.image === 'string' && detectBody.image.length > 100);
+check('app sends its own category and colour ids', Array.isArray(detectBody?.categories) && detectBody.categories.includes('sweater') && detectBody.categories.includes('socks') && detectBody.colors.includes('navy') && typeof detectBody.image === 'string' && detectBody.image.length > 100);
+check('app sends allowed patterns, fits and styles', detectBody?.patterns?.includes('stripe') && detectBody?.fits?.includes('slim') && detectBody?.styles?.includes('streetwear'));
 await shot('33-split-detected');
 await page.getByRole('button', { name: 'Add 3 pieces' }).click();
 await page.getByText('Item 1 of 3').first().waitFor({ timeout: 15000 }).catch(() => {});
 check('editor opens with three crops', await seen('Item 1 of 3'));
 check('suggested name is prefilled', (await page.locator('input').evaluateAll((els) => els.map((e) => e.value))).includes('Navy crew sweater'));
 check('suggested category is selected', await page.getByRole('button', { name: 'Sweater', exact: true }).first().getAttribute('aria-selected').catch(() => null) === 'true' || await page.getByRole('radio', { name: 'Sweater' }).first().isChecked().catch(() => false) || await page.getByText('Sweater', { exact: true }).first().isVisible());
+check('suggested details banner shows', await seen('Details suggested from the photo'));
+// A selected chip is filled; compare its button's background with an unselected sibling's.
+const chipBg = (label) => page.getByText(label, { exact: true }).first().evaluate((el) => getComputedStyle(el.closest('[role="button"]')).backgroundColor).catch(() => '');
+check('suggested fit is selected', (await chipBg('Relaxed')) !== (await chipBg('Slim')) && (await chipBg('Slim')) === (await chipBg('Tailored')));
+check('suggested pattern is selected', (await chipBg('Textured')) !== (await chipBg('Stripes')) && (await chipBg('Stripes')) === (await chipBg('Floral')));
+check('suggested detail is filled in', (await page.locator('input').evaluateAll((els) => els.map((e) => e.value))).includes('Crewneck'));
 await shot('34-split-editor-suggested');
+
+// ---- Single photo: fill in details
+await page.goto(`${base}/item/add`);
+await page.getByText('Choose from library').first().waitFor({ timeout: 15000 });
+const one = page.waitForEvent('filechooser');
+await page.getByText('Choose from library').first().click();
+await (await one).setFiles(photo);
+await page.getByRole('button', { name: 'Fill in details for me' }).waitFor({ timeout: 15000 }).catch(() => {});
+check('single photo offers Fill in details for me', await seen('Fill in details for me'));
+await page.getByRole('button', { name: 'Fill in details for me' }).click().catch(() => {});
+await page.getByText('Details suggested from the photo').first().waitFor({ timeout: 15000 }).catch(() => {});
+check('single photo takes the biggest piece', (await page.locator('input').evaluateAll((els) => els.map((e) => e.value))).includes('Light wash jeans'));
+check('socks is a category option', await page.getByText('Accessories', { exact: true }).first().click().then(() => page.getByText('Socks', { exact: true }).first().isVisible()).catch(() => false));
+await shot('36-single-filled');
 
 // ---- Avatar initial isn't clipped
 await page.goto(`${base}/social/edit-profile`);
