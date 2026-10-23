@@ -1,4 +1,4 @@
-import type { Availability, Fit, Formality, Pattern, Season, Warmth } from '@/types/models';
+import type { Availability, Fit, Formality, Pattern, Season, Warmth, StainLevel } from '@/types/models';
 
 export const FORMALITY_LABELS: Record<Formality, string> = {
   1: 'Lounge',
@@ -47,4 +47,10 @@ export const AVAILABILITY_LABELS: Record<Availability, string> = {
   lent: 'Lent out',
   repair: 'In repair',
   storage: 'In storage',
+};
+
+export const STAIN_LABELS: Record<StainLevel, string> = {
+  light: 'Light',
+  noticeable: 'Noticeable',
+  bad: 'Bad',
 };

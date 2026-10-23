@@ -144,4 +144,15 @@ describe('migrations', () => {
     expect(d.preferences.tempUnit).toBe('C');
     expect(d.preferences.repeatWindowDays).toBe(5);
   });
+
+  it('moves retired Chinos items to Pants, keeping what they were', () => {
+    const base = { id: 'a', name: 'Khakis', primaryColor: 'beige' };
+    const d = migrate({ items: [{ ...base, categoryId: 'chinos' }, { ...base, id: 'b', categoryId: 'chinos', subcategory: 'Slim chinos' }, { ...base, id: 'c', categoryId: 'jeans' }] });
+    expect(d.items.map((i) => [i.categoryId, i.subcategory])).toEqual([
+      ['trousers', 'Chinos'],
+      ['trousers', 'Slim chinos'],
+      ['jeans', undefined],
+    ]);
+    expect(migrate({ items: d.items }).items).toEqual(d.items);
+  });
 });

@@ -6,7 +6,7 @@ import { GarmentImage } from '@/components/GarmentImage';
 import { Text } from '@/components/Text';
 import { toast } from '@/components/Toast';
 import { Badge, Button, Card, EmptyState, IconButton, ListRow, NavHeader, Screen, SectionHeader, Segmented } from '@/components/ui';
-import { AVAILABILITY_LABELS, FIT_LABELS, FORMALITY_LABELS, PATTERN_LABELS, SEASON_LABELS, WARMTH_LABELS } from '@/features/closet/labels';
+import { AVAILABILITY_LABELS, FIT_LABELS, FORMALITY_LABELS, PATTERN_LABELS, SEASON_LABELS, WARMTH_LABELS, STAIN_LABELS } from '@/features/closet/labels';
 import { OutfitStrip } from '@/features/outfits/OutfitBoard';
 import { getCategory } from '@/engine/categories';
 import { getColor } from '@/engine/colors';
@@ -14,7 +14,7 @@ import { STYLE_LABELS } from '@/engine/scoring';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
-import type { Availability, ClothingItem } from '@/types/models';
+import type { Availability, ClothingItem, StainLevel } from '@/types/models';
 import { relativeDay } from '@/utils/dates';
 import { haptic } from '@/utils/haptics';
 
@@ -119,6 +119,25 @@ export default function ItemDetail() {
       {item.availability !== 'available' && (
         <Text variant="caption" color="textMuted" style={{ marginTop: 6 }}>
           Won’t be suggested until it’s available again.
+        </Text>
+      )}
+
+      <SectionHeader title="Stain" />
+      <Segmented<StainLevel | 'none'>
+        value={item.stain ?? 'none'}
+        onChange={(v) => {
+          store.updateItem(item.id, { stain: v === 'none' ? undefined : v });
+          if (v === 'none' && item.stain) toast({ message: 'Stain cleared', icon: 'check' });
+        }}
+        options={[{ value: 'none', label: 'None' }, ...(Object.keys(STAIN_LABELS) as StainLevel[]).map((s) => ({ value: s, label: STAIN_LABELS[s] }))]}
+      />
+      {item.stain && (
+        <Text variant="caption" color="textMuted" style={{ marginTop: 6 }}>
+          {item.stain === 'bad'
+            ? 'Won’t be suggested until you clear the stain.'
+            : item.stain === 'noticeable'
+              ? 'Only suggested for casual plans. Clear it once it’s out.'
+              : 'Kept out of dressy plans. Clear it once it’s out.'}
         </Text>
       )}
 

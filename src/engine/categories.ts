@@ -36,8 +36,8 @@ export const CATEGORIES: CategoryDef[] = [
   { id: 'coat', label: 'Coat', group: 'tops', slot: 'outerwear', layer: 'outer', defaults: { warmth: 5, formality: 3, wearsBeforeWash: 20 } },
   // Bottoms
   { id: 'jeans', label: 'Jeans', group: 'bottoms', slot: 'bottom', defaults: { warmth: 3, formality: 2, wearsBeforeWash: 5 } },
-  { id: 'chinos', label: 'Chinos', group: 'bottoms', slot: 'bottom', defaults: { warmth: 2, formality: 3, wearsBeforeWash: 3 } },
-  { id: 'trousers', label: 'Trousers', group: 'bottoms', slot: 'bottom', defaults: { warmth: 2, formality: 4, wearsBeforeWash: 3 } },
+  // Id stays 'trousers' so saved items keep working; it's labelled Pants.
+  { id: 'trousers', label: 'Pants', group: 'bottoms', slot: 'bottom', defaults: { warmth: 2, formality: 3, wearsBeforeWash: 3 } },
   { id: 'shorts', label: 'Shorts', group: 'bottoms', slot: 'bottom', defaults: { warmth: 1, formality: 1, wearsBeforeWash: 2 } },
   { id: 'sweatpants', label: 'Sweatpants', group: 'bottoms', slot: 'bottom', defaults: { warmth: 3, formality: 1, wearsBeforeWash: 3, styleTags: ['athletic', 'casual'] } },
   { id: 'skirt', label: 'Skirt', group: 'bottoms', slot: 'bottom', defaults: { warmth: 1, formality: 3, wearsBeforeWash: 2 } },
@@ -77,8 +77,11 @@ export const GROUP_LABELS: Record<CategoryGroup, string> = {
 
 const byId = new Map(CATEGORIES.map((c) => [c.id, c]));
 
+/** Retired category ids and what they became (old posts and backups still use them). */
+export const RETIRED_CATEGORIES: Record<string, string> = { chinos: 'trousers' };
+
 export function getCategory(id: string, custom: CustomCategory[] = []): CategoryDef {
-  const found = byId.get(id);
+  const found = byId.get(RETIRED_CATEGORIES[id] ?? id);
   if (found) return found;
   const c = custom.find((x) => x.id === id);
   if (c) {

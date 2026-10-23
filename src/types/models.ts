@@ -25,6 +25,9 @@ export type Pattern =
   | 'texture'
   | 'other';
 
+/** How visible a stain is. Missing = no stain. */
+export type StainLevel = 'light' | 'noticeable' | 'bad';
+
 export type Fit = 'oversized' | 'relaxed' | 'regular' | 'slim' | 'tailored';
 
 export type StyleTag =
@@ -82,6 +85,8 @@ export interface ClothingItem {
   waterResistant: boolean;
   seasons: Season[]; // empty = all seasons
   clean: boolean;
+  /** Light stains sit out dressy plans, noticeable ones anything past casual, bad ones everything. */
+  stain?: StainLevel;
   availability: Availability;
   /** How many wears before it needs washing. 1 = after every wear. */
   wearsBeforeWash: number;

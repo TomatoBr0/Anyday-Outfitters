@@ -115,6 +115,13 @@ await page.getByRole('button', { name: 'Fill in details for me' }).click().catch
 await page.getByText('Details suggested from the photo').first().waitFor({ timeout: 15000 }).catch(() => {});
 check('single photo takes the biggest piece', (await page.locator('input').evaluateAll((els) => els.map((e) => e.value))).includes('Light wash jeans'));
 check('socks is a category option', await page.getByText('Accessories', { exact: true }).first().click().then(() => page.getByText('Socks', { exact: true }).first().isVisible()).catch(() => false));
+await page.getByText('Add your own', { exact: true }).first().click();
+await page.getByPlaceholder('e.g. Tie, Gloves').fill('Tie');
+await page.getByRole('button', { name: 'Add category' }).click();
+await page.waitForTimeout(300);
+const tieBg = await page.getByText('Tie', { exact: true }).first().evaluate((el) => getComputedStyle(el.closest('[role="button"]')).backgroundColor).catch(() => '');
+const socksBg = await page.getByText('Socks', { exact: true }).first().evaluate((el) => getComputedStyle(el.closest('[role="button"]')).backgroundColor).catch(() => '');
+check('add your own category creates and selects it', !!tieBg && tieBg !== socksBg);
 await shot('36-single-filled');
 
 // ---- Avatar initial isn't clipped

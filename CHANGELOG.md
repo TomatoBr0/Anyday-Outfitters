@@ -7,6 +7,11 @@
 - The + button opens a menu: Make an outfit, or Log or post a fit.
 - Privacy & data → Clear wardrobe removes every piece, photo, saved outfit and wear history while keeping settings, events and trips.
 
+### Closet
+- **Pants** replaces Trousers, and **Chinos** is gone: existing chinos become Pants with "Chinos" as their detail. Pants default to smart-casual dressiness.
+- **Add your own** category in every group from the item editor (tops ask whether it's worn as a top or over one).
+- **Stains:** mark a piece None, Light, Noticeable or Bad. Bad stains sit out of outfits, noticeable ones only show up for casual plans, light ones skip dressy plans. Outfits that include a stained piece say so.
+
 ### Adding clothes
 - **Several pieces in one photo:** snap or pick one photo, drag a box around each piece, and each box becomes its own item with an on-device colour suggestion.
 - **Find pieces for me (optional):** a Cloudflare Worker (`worker/detect`) uses Claude vision to draw the boxes and suggest category, colour and name. Off until deployed and `EXPO_PUBLIC_DETECT_URL` is set.

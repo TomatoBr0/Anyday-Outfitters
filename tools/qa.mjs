@@ -179,7 +179,19 @@ await shot('15-item-detail');
 await tapTop(page.getByRole('button', { name: 'Mark dirty' }));
 await page.waitForTimeout(300);
 check('mark dirty updates status', (await page.getByRole('button', { name: 'Mark clean' }).count()) > 0);
+await tapTop(page.getByRole('tab', { name: 'Noticeable' }));
+await page.waitForTimeout(300);
+check('stain can be marked with a level', await visible('Only suggested for casual plans'));
+await shot('15c-item-stain');
+await tapTop(page.getByRole('tab', { name: 'None' }));
+await page.waitForTimeout(300);
+check('stain can be cleared', !(await visible('Only suggested for casual plans')));
 await tapLabel('Back');
+await page.waitForTimeout(300);
+await page.getByPlaceholder('Search your closet').fill('pants');
+await page.waitForTimeout(300);
+check('Pants replaces Trousers and Chinos', (await visible('Charcoal pants')) && (await visible('Khaki chinos')));
+await page.getByPlaceholder('Search your closet').fill('');
 
 // ---- Create
 await page.waitForTimeout(400);

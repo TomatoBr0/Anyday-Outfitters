@@ -66,6 +66,37 @@ describe('outfit structure', () => {
     expect(outfits[0].itemIds.sort()).toEqual([dress.id, flats.id].sort());
   });
 
+  it('keeps stained pieces out of plans they would show in', () => {
+    const c = basicCloset();
+    const items = list(c);
+    c.jeans.stain = 'bad';
+    for (const o of generateOutfits(ctx(items), { count: 10 }).outfits) expect(o.itemIds).not.toContain(c.jeans.id);
+
+    c.jeans.stain = 'noticeable';
+    const casual = generateOutfits(ctx(items, { occasion: 'everyday' }), { count: 10 }).outfits;
+    expect(casual.some((o) => o.itemIds.includes(c.jeans.id))).toBe(true);
+    const withJeans = casual.find((o) => o.itemIds.includes(c.jeans.id))!;
+    expect(withJeans.warnings.join(' ')).toMatch(/noticeable stain/);
+    for (const o of generateOutfits(ctx(items, { occasion: 'work' }), { count: 10 }).outfits) expect(o.itemIds).not.toContain(c.jeans.id);
+
+    c.trousers.stain = 'light';
+    for (const o of generateOutfits(ctx(items, { targetFormality: 5 }), { count: 10 }).outfits) expect(o.itemIds).not.toContain(c.trousers.id);
+  });
+
+  it('pinning a badly stained piece still includes it, with a warning', () => {
+    const c = basicCloset();
+    c.jeans.stain = 'bad';
+    const { outfits } = generateOutfits(ctx(list(c), { lockedItemIds: [c.jeans.id] }));
+    expect(outfits[0].itemIds).toContain(c.jeans.id);
+    expect(outfits[0].warnings.join(' ')).toMatch(/bad stain — included because you pinned it/);
+  });
+
+  it('labels trousers as Pants and maps retired Chinos to Pants', () => {
+    expect(getCategory('trousers').label).toBe('Pants');
+    expect(getCategory('chinos').id).toBe('trousers');
+    expect(getCategory('chinos').slot).toBe('bottom');
+  });
+
   it('tracks socks in the closet without adding them to outfits', () => {
     const c = basicCloset();
     const socks = item({ name: 'White socks', categoryId: 'socks', primaryColor: 'white', favorite: true });
@@ -185,10 +216,12 @@ describe('weather', () => {
   it('respects personal temperature sensitivity', () => {
     const items = list(basicCloset());
     const mild = weather({ feelsLikeC: 15, tempC: 15 });
-    const cold = generateOutfits(ctx(items, { weather: mild, coldSensitivity: 'runsCold' }));
-    const warm = generateOutfits(ctx(items, { weather: mild, coldSensitivity: 'runsWarm' }));
-    const warmth = (ids: string[]) => ids.reduce((s, id) => s + items.find((i) => i.id === id)!.warmth, 0);
-    expect(warmth(cold.outfits[0].itemIds)).toBeGreaterThan(warmth(warm.outfits[0].itemIds));
+    const cold = generateOutfits(ctx(items, { weather: mild, coldSensitivity: 'runsCold' }), { count: 3 });
+    const warm = generateOutfits(ctx(items, { weather: mild, coldSensitivity: 'runsWarm' }), { count: 3 });
+    // Average clothing warmth across the top picks (accessories like sunglasses aren't layers).
+    const core = (ids: string[]) => ids.map((id) => items.find((i) => i.id === id)!).filter((i) => getCategory(i.categoryId).slot !== 'accessory');
+    const avgWarmth = (r: typeof cold) => r.outfits.reduce((s, o) => s + core(o.itemIds).reduce((t, i) => t + i.warmth, 0), 0) / r.outfits.length;
+    expect(avgWarmth(cold)).toBeGreaterThan(avgWarmth(warm));
   });
 });
 

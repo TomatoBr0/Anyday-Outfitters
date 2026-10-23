@@ -1,5 +1,5 @@
-import { DEFAULT_AUTO_DIRTY } from '@/engine/categories';
-import { SCHEMA_VERSION, type AppData, type UserPreferences } from '@/types/models';
+import { DEFAULT_AUTO_DIRTY, RETIRED_CATEGORIES } from '@/engine/categories';
+import { SCHEMA_VERSION, type AppData, type ClothingItem, type UserPreferences } from '@/types/models';
 
 export function defaultPreferences(): UserPreferences {
   return {
@@ -28,7 +28,7 @@ export function migrate(raw: Record<string, unknown>): AppData {
   // v1 is the first schema; future migrations go here, keyed on raw.schemaVersion.
   return {
     schemaVersion: SCHEMA_VERSION,
-    items: arr(raw.items),
+    items: arr<ClothingItem>(raw.items).map(retireCategory),
     outfits: arr(raw.outfits),
     wearLogs: arr(raw.wearLogs),
     feedback: arr(raw.feedback),
@@ -36,4 +36,13 @@ export function migrate(raw: Record<string, unknown>): AppData {
     trips: arr(raw.trips),
     preferences: prefs,
   };
+}
+
+const RETIRED_DETAIL: Record<string, string> = { chinos: 'Chinos' };
+
+/** Move items off retired categories (e.g. Chinos → Pants) without losing what they were. Idempotent. */
+function retireCategory(i: ClothingItem): ClothingItem {
+  const to = RETIRED_CATEGORIES[i.categoryId];
+  if (!to) return i;
+  return { ...i, categoryId: to, subcategory: i.subcategory || RETIRED_DETAIL[i.categoryId] };
 }

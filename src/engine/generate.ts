@@ -109,6 +109,16 @@ export function buildPools(ctx: EngineContext): { pools: Pools; issues: EngineIs
     }
   }
 
+  // Stains: badly stained pieces sit out. Visible stains stay out of dressier
+  // plans (light: dressy and up; noticeable: past casual) when a clean piece can stand in.
+  const [lo] = formalityBand(ctx);
+  const tooVisible = (i: ClothingItem) => (i.stain === 'noticeable' && lo >= 3) || (i.stain === 'light' && lo >= 4);
+  for (const s of Object.keys(pools) as Slot[]) {
+    if (!ctx.allowUnavailable) pools[s] = pools[s].filter((i) => i.stain !== 'bad');
+    const kept = pools[s].filter((i) => !tooVisible(i));
+    if (kept.length && kept.length < pools[s].length) pools[s] = kept;
+  }
+
   // Locked items always make it in, even if dirty — that's an explicit choice.
   for (const l of locked) {
     const s = slotOf(l, ctx);
@@ -356,6 +366,7 @@ export function generateOutfits(ctx: EngineContext, opts: { count?: number } = {
     const warnings = [...c.warnings];
     for (const l of locked) if (!isWearable(l)) warnings.push(`${l.name} is marked ${l.clean ? l.availability : 'dirty'} — included because you pinned it`);
     if (!c.items.some((i) => slotOf(i, ctx) === 'footwear')) warnings.push('No shoes available — add a pair to complete the look');
+    for (const i of items) if (i.stain) warnings.push(`${i.name} has a ${i.stain} stain${lockedIds.has(i.id) ? ' — included because you pinned it' : ''}`);
     const reasons = dedupe(c.reasons);
     if (ctx.weather && accessories.some((a) => getCategory(a.categoryId, ctx.customCategories).accessoryKind === 'sunglasses'))
       reasons.push('Sunglasses for a bright day');

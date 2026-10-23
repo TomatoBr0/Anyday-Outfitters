@@ -13,7 +13,7 @@ import { GarmentGlyph } from '@/components/GarmentGlyph';
 import { Icon } from '@/components/Icon';
 import { Text } from '@/components/Text';
 import { toast } from '@/components/Toast';
-import { Badge, Button, Chip, FieldLabel, IconButton, NavHeader, Stepper, TextField, ToggleRow } from '@/components/ui';
+import { Badge, Button, Chip, FieldLabel, IconButton, NavHeader, Segmented, Stepper, TextField, ToggleRow } from '@/components/ui';
 import type { PhotoHint, PickedPhoto } from '@/features/closet/picker';
 import { FIT_LABELS, FORMALITY_LABELS, PATTERN_LABELS, SEASON_LABELS, WARMTH_LABELS } from '@/features/closet/labels';
 import { GROUP_LABELS, allCategories, getCategory } from '@/engine/categories';
@@ -25,9 +25,13 @@ import { persistImage, processImage, resolveImage } from '@/services/images';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
-import type { CategoryGroup, ClothingItem, Fit, Formality, Pattern, Season, StyleTag, Warmth } from '@/types/models';
+import type { CategoryGroup, ClothingItem, Fit, Formality, Pattern, Season, Slot, StyleTag, Warmth } from '@/types/models';
 import { haptic } from '@/utils/haptics';
 import { newId } from '@/utils/id';
+
+/** Where a custom category sits in an outfit, by group (tops ask: top or outer layer). */
+const GROUP_SLOT: Record<CategoryGroup, Slot> = { tops: 'top', bottoms: 'bottom', footwear: 'footwear', accessories: 'accessory', other: 'onePiece' };
+const NEW_CATEGORY_EXAMPLE: Record<CategoryGroup, string> = { tops: 'e.g. Flannel, Vest', bottoms: 'e.g. Cargo pants', footwear: 'e.g. Slides', accessories: 'e.g. Tie, Gloves', other: 'e.g. Overalls' };
 
 type Draft = Omit<ClothingItem, 'id' | 'createdAt' | 'updatedAt' | 'categoryId'> & { categoryId?: string };
 
@@ -243,6 +247,25 @@ export default function ItemEditor() {
   };
 
   const groupCats = allCategories(custom).filter((c) => c.group === group);
+
+  const [adding, setAdding] = useState(false);
+  const [newLabel, setNewLabel] = useState('');
+  const [newSlot, setNewSlot] = useState<'top' | 'outerwear'>('top');
+  const addCategory = () => {
+    const label = newLabel.trim().replace(/\s+/g, ' ');
+    if (!label) return;
+    // Reuse a category with the same name in this group rather than duplicating it.
+    const same = groupCats.find((c) => c.label.toLowerCase() === label.toLowerCase());
+    let id = same?.id;
+    if (!id) {
+      id = `custom-${newId()}`;
+      const slot: Slot = group === 'tops' ? newSlot : GROUP_SLOT[group];
+      useStore.getState().setPreferences({ customCategories: [...custom, { id, label, group, slot }] });
+    }
+    chooseCategory(id);
+    setAdding(false);
+    setNewLabel('');
+  };
   const previewUri = photo?.uri ?? resolveImage(existing?.imagePath);
   const title = existing ? 'Edit item' : queue.length > 1 ? `Item ${index + 1} of ${queue.length}` : 'New item';
 
@@ -306,7 +329,24 @@ export default function ItemEditor() {
           {groupCats.map((c) => (
             <Chip key={c.id} label={c.label} selected={draft.categoryId === c.id} onPress={() => chooseCategory(c.id)} />
           ))}
+          <Chip label="Add your own" icon="plus" selected={adding} onPress={() => setAdding((a) => !a)} />
         </View>
+        {adding && (
+          <View style={{ marginTop: space.md, padding: space.md, gap: space.md, borderRadius: radius.md, backgroundColor: colors.surfaceAlt }}>
+            <TextField label={`New ${GROUP_LABELS[group].toLowerCase()} category`} placeholder={NEW_CATEGORY_EXAMPLE[group]} value={newLabel} onChangeText={setNewLabel} autoFocus maxLength={24} returnKeyType="done" onSubmitEditing={addCategory} />
+            {group === 'tops' && (
+              <Segmented<'top' | 'outerwear'>
+                value={newSlot}
+                onChange={setNewSlot}
+                options={[
+                  { value: 'top', label: 'Worn as a top' },
+                  { value: 'outerwear', label: 'Worn over a top' },
+                ]}
+              />
+            )}
+            <Button label="Add category" icon="plus" size="sm" disabled={!newLabel.trim()} onPress={addCategory} />
+          </View>
+        )}
 
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: space.lg, marginBottom: 8, gap: 8 }}>
           <Text variant="label" color="textMuted">

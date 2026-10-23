@@ -222,6 +222,7 @@ function SafeTop() {
 function statusLabel(i: ClothingItem) {
   if (i.availability !== 'available') return { lent: 'Lent out', repair: 'In repair', storage: 'In storage' }[i.availability as 'lent' | 'repair' | 'storage'];
   if (!i.clean) return 'In hamper';
+  if (i.stain) return i.stain === 'light' ? 'Light stain' : i.stain === 'bad' ? 'Bad stain' : 'Stained';
   return undefined;
 }
 
@@ -236,7 +237,7 @@ function GridTile({ item, width }: { item: ClothingItem; width: number }) {
       style={({ pressed }) => ({ width, opacity: pressed ? 0.85 : 1 })}
     >
       <View>
-        <GarmentImage item={item} size={width} rounded={radius.lg} style={{ opacity: st ? 0.55 : 1 }} />
+        <GarmentImage item={item} size={width} rounded={radius.lg} style={{ opacity: !item.clean || item.availability !== 'available' ? 0.55 : 1 }} />
         {item.favorite && (
           <View style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: 14, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
             <Icon name="heartFill" size={15} color={colors.sun} />

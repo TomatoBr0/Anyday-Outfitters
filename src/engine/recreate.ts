@@ -76,7 +76,7 @@ function categorySimilarity(a: string, b: string, custom: CustomCategory[]): num
   if (ca.layer && ca.layer === cb.layer) return 0.7; // e.g. sweater ↔ hoodie
   if (ca.footwearKind && ca.footwearKind === cb.footwearKind) return 0.85;
   if (ca.accessoryKind && ca.accessoryKind !== cb.accessoryKind) return 0.1;
-  return 0.5; // same slot, different kind (jeans ↔ chinos)
+  return 0.5; // same slot, different kind (jeans ↔ pants)
 }
 
 function styleSimilarity(a: PostItemTag['styleTags'], b: ClothingItem['styleTags']): number {
