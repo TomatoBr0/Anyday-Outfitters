@@ -5,6 +5,8 @@ export interface PickedPhoto {
   uri: string;
   width: number;
   height: number;
+  /** Suggestions for this piece (from AI piece detection), applied in the editor. */
+  hint?: { categoryId?: string; primaryColor?: string; name?: string };
 }
 
 function denied(what: string) {
@@ -18,24 +20,25 @@ function denied(what: string) {
   );
 }
 
-export async function pickFromCamera(): Promise<PickedPhoto[] | undefined> {
+/** `square` crops to one piece; pass false to keep the whole shot (several pieces). */
+export async function pickFromCamera(square = true): Promise<PickedPhoto[] | undefined> {
   const perm = await ImagePicker.requestCameraPermissionsAsync();
   if (!perm.granted) {
     denied('Camera');
     return;
   }
-  const res = await ImagePicker.launchCameraAsync({ mediaTypes: 'images', allowsEditing: true, aspect: [1, 1], quality: 0.9 });
+  const res = await ImagePicker.launchCameraAsync({ mediaTypes: 'images', allowsEditing: square, aspect: [1, 1], quality: 0.9 });
   if (res.canceled) return;
   return res.assets.map((a) => ({ uri: a.uri, width: a.width, height: a.height }));
 }
 
-export async function pickFromLibrary(multiple = true): Promise<PickedPhoto[] | undefined> {
+export async function pickFromLibrary(multiple = true, square = !multiple): Promise<PickedPhoto[] | undefined> {
   // iOS 14+ uses the system picker, which needs no library permission.
   const res = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: 'images',
     allowsMultipleSelection: multiple,
     selectionLimit: 20,
-    allowsEditing: !multiple,
+    allowsEditing: square,
     aspect: [1, 1],
     quality: 0.9,
   });

@@ -88,21 +88,44 @@ export default function ItemEditor() {
     setAnalyzing(true);
   };
 
-  // On-device color suggestion for the current photo.
+  function applyCategory(d: Draft, id: string): Draft {
+    const cat = getCategory(id, custom);
+    return {
+      ...d,
+      categoryId: id,
+      // Category defaults fill anything the user hasn't explicitly set.
+      formality: touched.has('formality') ? d.formality : cat.defaults.formality,
+      warmth: touched.has('warmth') ? d.warmth : cat.defaults.warmth,
+      wearsBeforeWash: touched.has('wearsBeforeWash') ? d.wearsBeforeWash : cat.defaults.wearsBeforeWash,
+      waterResistant: touched.has('waterResistant') ? d.waterResistant : !!cat.defaults.waterResistant,
+      styleTags: touched.has('styleTags') || !cat.defaults.styleTags ? d.styleTags : [...new Set([...cat.defaults.styleTags, ...d.styleTags])],
+    };
+  }
+
+  // On-device color suggestion for the current photo, plus any suggestions that
+  // came with it (category, color and name from piece detection).
   useEffect(() => {
     if (!photo) return;
     let alive = true;
+    const hint = photo.hint;
     suggestColors(photo.uri).then((s) => {
       if (!alive) return;
       setAnalyzing(false);
-      if (s) {
-        setSuggested(s);
-        setDraft((d) => ({ ...d, primaryColor: s.primary, secondaryColors: s.secondary ? [s.secondary] : [] }));
-      }
+      if (s) setSuggested(s);
+      setDraft((d) => {
+        let next = s ? { ...d, primaryColor: s.primary, secondaryColors: s.secondary ? [s.secondary] : [] } : d;
+        if (hint?.primaryColor) next = { ...next, primaryColor: hint.primaryColor, secondaryColors: next.secondaryColors.filter((c) => c !== hint.primaryColor) };
+        if (hint?.categoryId) next = applyCategory(next, hint.categoryId);
+        if (hint?.name) next = { ...next, name: hint.name };
+        return next;
+      });
+      if (hint?.categoryId) setGroup(getCategory(hint.categoryId, custom).group);
     });
     return () => {
       alive = false;
     };
+    // Runs once per photo; category defaults read the latest `touched` via applyCategory.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [photo]);
 
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) => {
@@ -112,18 +135,9 @@ export default function ItemEditor() {
 
   const chooseCategory = (id: string) => {
     haptic.tap();
-    const cat = getCategory(id, custom);
-    setDraft((d) => ({
-      ...d,
-      categoryId: id,
-      // Category defaults fill anything the user hasn't explicitly set.
-      formality: touched.has('formality') ? d.formality : cat.defaults.formality,
-      warmth: touched.has('warmth') ? d.warmth : cat.defaults.warmth,
-      wearsBeforeWash: touched.has('wearsBeforeWash') ? d.wearsBeforeWash : cat.defaults.wearsBeforeWash,
-      waterResistant: touched.has('waterResistant') ? d.waterResistant : !!cat.defaults.waterResistant,
-      styleTags: touched.has('styleTags') || !cat.defaults.styleTags ? d.styleTags : [...new Set([...cat.defaults.styleTags, ...d.styleTags])],
-    }));
+    setDraft((d) => applyCategory(d, id));
   };
+
 
   const toggleIn = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 

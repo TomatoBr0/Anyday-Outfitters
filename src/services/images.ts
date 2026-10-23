@@ -48,7 +48,8 @@ export async function processImage(
     ({ width, height } = ops.crop);
   }
   if (Math.max(width, height) > maxSize) {
-    ctx.resize(width >= height ? { width: maxSize, height: null } : { width: null, height: maxSize });
+    const scale = maxSize / Math.max(width, height);
+    ctx.resize({ width: Math.round(width * scale), height: Math.round(height * scale) });
   }
   const rendered = await ctx.renderAsync();
   return rendered.saveAsync({ format: SaveFormat.JPEG, compress: 0.82 }); // { uri, width, height }

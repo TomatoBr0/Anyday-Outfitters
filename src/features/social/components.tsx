@@ -36,7 +36,7 @@ export function Avatar({ profile, size = 36 }: { profile?: Profile; size?: numbe
       {uri ? (
         <Image source={{ uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
       ) : (
-        <Text style={{ color: '#FBF8F3', fontSize: size * 0.42, fontWeight: '600' }} maxFontSizeMultiplier={1}>
+        <Text style={{ color: '#FBF8F3', fontSize: size * 0.42, lineHeight: Math.round(size * 0.42 * 1.25), fontWeight: '600', textAlign: 'center', includeFontPadding: false }} maxFontSizeMultiplier={1}>
           {(profile?.displayName ?? '?').slice(0, 1).toUpperCase()}
         </Text>
       )}

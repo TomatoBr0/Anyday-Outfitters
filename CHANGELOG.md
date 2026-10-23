@@ -7,6 +7,11 @@
 - The + button opens a menu: Make an outfit, or Log or post a fit.
 - Privacy & data → Clear wardrobe removes every piece, photo, saved outfit and wear history while keeping settings, events and trips.
 
+### Adding clothes
+- **Several pieces in one photo:** snap or pick one photo, drag a box around each piece, and each box becomes its own item with an on-device colour suggestion.
+- **Find pieces for me (optional):** a Cloudflare Worker (`worker/detect`) uses Claude vision to draw the boxes and suggest category, colour and name. Off until deployed and `EXPO_PUBLIC_DETECT_URL` is set.
+- Fixed the profile avatar initial being clipped on iOS.
+
 ### Platform
 - Upgraded to Expo SDK 58 (React Native 0.88) for the current Expo Go.
 

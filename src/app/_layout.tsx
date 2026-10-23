@@ -88,6 +88,7 @@ function Navigator() {
         <Stack.Screen name="onboarding" options={{ gestureEnabled: false, animation: 'fade' }} />
         <Stack.Screen name="item/add" options={{ presentation: 'modal' }} />
         <Stack.Screen name="item/editor" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="item/split" options={{ presentation: 'modal' }} />
         <Stack.Screen name="event/edit" options={{ presentation: 'modal' }} />
         <Stack.Screen name="trip/new" options={{ presentation: 'modal' }} />
         <Stack.Screen name="social/compose" options={{ presentation: 'modal' }} />
