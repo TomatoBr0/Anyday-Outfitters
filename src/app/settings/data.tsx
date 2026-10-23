@@ -58,6 +58,25 @@ export default function DataSettings() {
         <ListRow
           first
           destructive
+          icon="hanger"
+          title="Clear wardrobe"
+          subtitle="Every piece and photo, plus saved outfits and history. Settings stay"
+          onPress={() =>
+            Alert.alert('Clear your wardrobe?', `This permanently removes all ${items.length} pieces and their photos, along with saved outfits and wear history. Your settings, events and trips stay. It can’t be undone.`, [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Clear wardrobe',
+                style: 'destructive',
+                onPress: () => {
+                  useStore.getState().clearWardrobe();
+                  toast({ message: 'Wardrobe cleared', icon: 'check' });
+                },
+              },
+            ])
+          }
+        />
+        <ListRow
+          destructive
           icon="trash"
           title="Delete all data"
           subtitle="Closet, photos, outfits, history, settings"

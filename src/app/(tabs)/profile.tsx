@@ -126,7 +126,7 @@ export default function Profile() {
       </Card>
       <Card padded={false} style={{ paddingHorizontal: space.lg, marginTop: space.md }}>
         <ListRow first icon="star" title={`${BRAND.name} Plus`} subtitle="What’s free, what’s coming" onPress={() => router.push('/settings/premium')} />
-        <ListRow icon="lock" title="Privacy & data" subtitle="Export, sample data, delete everything" onPress={() => router.push('/settings/data')} />
+        <ListRow icon="lock" title="Privacy & data" subtitle="Export, clear wardrobe, delete everything" onPress={() => router.push('/settings/data')} />
         <ListRow icon="info" title="About" onPress={() => router.push('/settings/about')} />
       </Card>
 

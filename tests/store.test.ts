@@ -102,6 +102,31 @@ describe('store actions', () => {
     expect(useStore.getState().items.map((i) => i.name)).toEqual(['Mine']);
   });
 
+  it('menswear sample closet leaves out the dress', () => {
+    useStore.getState().setPreferences({ clothesFor: 'mens' });
+    useStore.getState().loadSamples();
+    expect(useStore.getState().items.some((i) => i.categoryId === 'dress')).toBe(false);
+  });
+
+  it('clearing the wardrobe keeps settings, events and trips', async () => {
+    const s = useStore.getState();
+    s.setPreferences({ onboarded: true, displayName: 'Sam' });
+    s.loadSamples();
+    const ids = useStore.getState().items.slice(0, 3).map((i) => i.id);
+    s.saveOutfit(ids);
+    s.wearOutfit(ids);
+    s.addFeedback(ids, 'like');
+    s.upsertEvent({ date: '2026-11-02', title: 'Interview', occasion: 'work', formality: 3 });
+    s.upsertTrip({ destination: 'NYC', startDate: '2026-11-05', endDate: '2026-11-07', latitude: 40.7, longitude: -74, activities: ['everyday'], laundryAvailable: false, carryOnOnly: true, packingList: [{ label: 'Jeans', itemId: ids[0], quantity: 1, packed: false }] });
+    useStore.getState().clearWardrobe();
+    await restart();
+    const after = useStore.getState();
+    expect([after.items, after.outfits, after.wearLogs, after.feedback]).toEqual([[], [], [], []]);
+    expect(after.preferences.displayName).toBe('Sam');
+    expect(after.events).toHaveLength(1);
+    expect(after.trips[0].packingList[0]).not.toHaveProperty('itemId');
+  });
+
   it('reset wipes everything', async () => {
     useStore.getState().addItems([{ categoryId: 'tshirt' }]);
     useStore.getState().setPreferences({ onboarded: true });

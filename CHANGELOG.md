@@ -5,6 +5,7 @@
 ### Personalization
 - Onboarding and Style & fit ask what you usually wear (men’s, women’s or both). Menswear leaves dresses and skirts out of picks, swaps, packing lists, onboarding examples and the sample closet.
 - The + button opens a menu: Make an outfit, or Log or post a fit.
+- Privacy & data → Clear wardrobe removes every piece, photo, saved outfit and wear history while keeping settings, events and trips.
 
 ### Platform
 - Upgraded to Expo SDK 58 (React Native 0.88) for the current Expo Go.

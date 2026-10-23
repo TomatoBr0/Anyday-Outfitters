@@ -46,6 +46,8 @@ interface Actions {
   setAvailability(id: ID, availability: Availability): void;
   loadSamples(): void;
   removeSamples(): void;
+  /** Remove every piece, its photos, and the outfits, history and feedback built on them. Settings, events and trips stay. */
+  clearWardrobe(): void;
   // outfits
   saveOutfit(itemIds: ID[], meta?: Partial<Outfit>): ID;
   updateOutfit(id: ID, patch: Partial<Outfit>): void;
@@ -138,6 +140,17 @@ export const useStore = create<Store>()((set, get) => ({
       outfits: get()
         .outfits.map((o) => ({ ...o, itemIds: o.itemIds.filter((x) => !ids.has(x)) }))
         .filter((o) => o.itemIds.length > 0),
+    });
+  },
+
+  clearWardrobe() {
+    deleteAllImages();
+    set({
+      items: [],
+      outfits: [],
+      wearLogs: [],
+      feedback: [],
+      trips: get().trips.map((t) => ({ ...t, packingList: t.packingList.map(({ itemId: _, ...e }) => e) })),
     });
   },
 
