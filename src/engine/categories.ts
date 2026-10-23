@@ -1,4 +1,4 @@
-import type { CategoryGroup, CustomCategory, Formality, Slot, StyleTag, Warmth } from '@/types/models';
+import type { CategoryGroup, ClothesFor, CustomCategory, Formality, Slot, StyleTag, Warmth } from '@/types/models';
 
 export interface CategoryDef {
   id: string;
@@ -105,3 +105,7 @@ export function allCategories(custom: CustomCategory[] = []): CategoryDef[] {
 export const DEFAULT_AUTO_DIRTY = CATEGORIES.filter(
   (c) => c.group === 'tops' || c.group === 'bottoms' || c.group === 'other',
 ).map((c) => c.id);
+
+/** Pieces left out of suggestions, examples and the sample closet for menswear. */
+const WOMENSWEAR_ONLY = new Set(['dress', 'skirt']);
+export const suitsWardrobe = (categoryId: string, clothesFor: ClothesFor = 'all') => clothesFor !== 'mens' || !WOMENSWEAR_ONLY.has(categoryId);

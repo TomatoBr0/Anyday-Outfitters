@@ -1,7 +1,7 @@
 /**
- * Six quick steps, every one skippable except the welcome. Collects only what
- * changes recommendations: styles, fits, temperature comfort, location, and a
- * first few closet items.
+ * Seven quick steps, every one skippable except the welcome. Collects only what
+ * changes recommendations: which clothes to suggest, styles, fits, temperature
+ * comfort, location, and a first few closet items.
  */
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -16,24 +16,27 @@ import { OptionCard } from '@/components/OptionCard';
 import { Text } from '@/components/Text';
 import { Button, Chip, IconButton, Segmented, TextField } from '@/components/ui';
 import { BRAND } from '@/config/brand';
+import { SAMPLE_CLOSET } from '@/data/sampleCloset';
+import { suitsWardrobe } from '@/engine/categories';
 import { STYLE_LABELS } from '@/engine/scoring';
 import { FIT_LABELS } from '@/features/closet/labels';
 import { pickFromCamera, pickFromLibrary } from '@/features/closet/picker';
-import { STYLE_EXAMPLES } from '@/features/onboarding/styleExamples';
+import { styleExamplesFor } from '@/features/onboarding/styleExamples';
 import { CitySearch } from '@/features/weather/CitySearch';
 import { useStore } from '@/state/store';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space } from '@/theme/tokens';
-import type { CategoryGroup, ColdSensitivity, Fit, StyleTag, TempUnit } from '@/types/models';
+import type { CategoryGroup, ClothesFor, ColdSensitivity, Fit, StyleTag, TempUnit } from '@/types/models';
 import { haptic } from '@/utils/haptics';
 
-const STEPS = ['welcome', 'style', 'fit', 'temp', 'location', 'closet'] as const;
+const STEPS = ['welcome', 'wardrobe', 'style', 'fit', 'temp', 'location', 'closet'] as const;
 
 export default function Onboarding() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const prefs = useStore((s) => s.preferences);
   const [step, setStep] = useState(0);
+  const [clothesFor, setClothesFor] = useState<ClothesFor>(prefs.clothesFor);
   const [name, setName] = useState(prefs.displayName ?? '');
   const [styles, setStyles] = useState<StyleTag[]>(prefs.styles);
   const [fits, setFits] = useState<Partial<Record<CategoryGroup, Fit>>>(prefs.fitByGroup);
@@ -43,9 +46,11 @@ export default function Onboarding() {
   const set = useStore.getState().setPreferences;
   const next = () => {
     haptic.tap();
-    if (step === 1) set({ styles, displayName: name.trim() || undefined });
-    if (step === 2) set({ fitByGroup: fits });
-    if (step === 3) set({ coldSensitivity: cold, tempUnit: unit });
+    const current = STEPS[step];
+    if (current === 'wardrobe') set({ clothesFor });
+    if (current === 'style') set({ styles, displayName: name.trim() || undefined });
+    if (current === 'fit') set({ fitByGroup: fits });
+    if (current === 'temp') set({ coldSensitivity: cold, tempUnit: unit });
     setStep((s) => Math.min(STEPS.length - 1, s + 1));
   };
   const back = () => setStep((s) => Math.max(0, s - 1));
@@ -84,8 +89,9 @@ export default function Onboarding() {
       <ScrollView contentContainerStyle={{ paddingHorizontal: space.xl, paddingBottom: 140, flexGrow: 1 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <Animated.View key={kind} entering={step === 0 ? FadeIn.duration(400) : FadeInRight.duration(260)} style={{ flex: 1 }}>
           {kind === 'welcome' && <Welcome />}
-          {kind === 'style' && <StyleStep name={name} setName={setName} styles={styles} setStyles={setStyles} />}
-          {kind === 'fit' && <FitStep fits={fits} setFits={setFits} />}
+          {kind === 'wardrobe' && <WardrobeStep value={clothesFor} onChange={setClothesFor} />}
+          {kind === 'style' && <StyleStep name={name} setName={setName} styles={styles} setStyles={setStyles} clothesFor={clothesFor} />}
+          {kind === 'fit' && <FitStep fits={fits} setFits={setFits} clothesFor={clothesFor} />}
           {kind === 'temp' && <TempStep cold={cold} setCold={setCold} unit={unit} setUnit={setUnit} />}
           {kind === 'location' && <LocationStep onDone={next} />}
           {kind === 'closet' && <ClosetStep finish={finish} />}
@@ -164,7 +170,52 @@ function StepTitle({ title, body }: { title: string; body?: string }) {
   );
 }
 
-function StyleStep({ name, setName, styles, setStyles }: { name: string; setName: (s: string) => void; styles: StyleTag[]; setStyles: (s: StyleTag[]) => void }) {
+function WardrobeStep({ value, onChange }: { value: ClothesFor; onChange: (v: ClothesFor) => void }) {
+  const opts: { v: ClothesFor; title: string; body: string }[] = [
+    { v: 'mens', title: 'Men’s clothes', body: 'No dresses or skirts in your picks' },
+    { v: 'womens', title: 'Women’s clothes', body: 'Dresses and skirts included' },
+    { v: 'all', title: 'A mix of both', body: 'We’ll suggest from everything you add' },
+  ];
+  return (
+    <View>
+      <StepTitle title="What do you usually wear?" body="So your outfits match what’s actually in your closet. Change it any time in Style & fit." />
+      <View style={{ gap: space.md }}>
+        {opts.map((o) => (
+          <RadioCard key={o.v} title={o.title} body={o.body} selected={value === o.v} onPress={() => onChange(o.v)} />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function RadioCard({ title, body, icon, selected, onPress }: { title: string; body: string; icon?: IconName; selected: boolean; onPress: () => void }) {
+  const { colors } = useTheme();
+  return (
+    <Pressable
+      onPress={() => {
+        haptic.tap();
+        onPress();
+      }}
+      accessibilityRole="radio"
+      accessibilityState={{ checked: selected }}
+      accessibilityLabel={`${title}. ${body}`}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.lg, borderRadius: radius.lg, backgroundColor: colors.surface, borderWidth: 2, borderColor: selected ? colors.text : colors.border }}
+    >
+      {icon && <Icon name={icon} size={26} color={colors.sun} />}
+      <View style={{ flex: 1 }}>
+        <Text variant="heading">{title}</Text>
+        <Text variant="caption" color="textMuted">
+          {body}
+        </Text>
+      </View>
+      <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: selected ? colors.text : colors.borderStrong, alignItems: 'center', justifyContent: 'center' }}>
+        {selected && <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.text }} />}
+      </View>
+    </Pressable>
+  );
+}
+
+function StyleStep({ name, setName, styles, setStyles, clothesFor }: { name: string; setName: (s: string) => void; styles: StyleTag[]; setStyles: (s: StyleTag[]) => void; clothesFor: ClothesFor }) {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const cardW = (width - space.xl * 2 - space.md) / 2;
@@ -173,7 +224,7 @@ function StyleStep({ name, setName, styles, setStyles }: { name: string; setName
       <StepTitle title="What do you like to wear?" body="Pick as many as feel like you. Mixing is encouraged." />
       <TextField label="What should we call you? (optional)" placeholder="First name" value={name} onChangeText={setName} autoCapitalize="words" returnKeyType="done" />
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md, marginTop: space.xl }}>
-        {STYLE_EXAMPLES.map((ex) => {
+        {styleExamplesFor(clothesFor).map((ex) => {
           const sel = styles.includes(ex.tag);
           return (
             <Pressable
@@ -215,11 +266,11 @@ function StyleStep({ name, setName, styles, setStyles }: { name: string; setName
   );
 }
 
-function FitStep({ fits, setFits }: { fits: Partial<Record<CategoryGroup, Fit>>; setFits: (f: Partial<Record<CategoryGroup, Fit>>) => void }) {
+function FitStep({ fits, setFits, clothesFor }: { fits: Partial<Record<CategoryGroup, Fit>>; setFits: (f: Partial<Record<CategoryGroup, Fit>>) => void; clothesFor: ClothesFor }) {
   const groups: { g: CategoryGroup; label: string }[] = [
     { g: 'tops', label: 'Tops' },
     { g: 'bottoms', label: 'Bottoms' },
-    { g: 'other', label: 'Dresses & sets' },
+    { g: 'other', label: clothesFor === 'mens' ? 'Suits & sets' : 'Dresses & sets' },
   ];
   return (
     <View>
@@ -241,7 +292,6 @@ function FitStep({ fits, setFits }: { fits: Partial<Record<CategoryGroup, Fit>>;
 }
 
 function TempStep({ cold, setCold, unit, setUnit }: { cold: ColdSensitivity; setCold: (c: ColdSensitivity) => void; unit: TempUnit; setUnit: (u: TempUnit) => void }) {
-  const { colors } = useTheme();
   const opts: { v: ColdSensitivity; title: string; body: string; icon: IconName }[] = [
     { v: 'runsCold', title: 'Chilly — I’d want a layer', body: 'We’ll lean warmer', icon: 'snow' },
     { v: 'neutral', title: 'Just right', body: 'We’ll go by the forecast', icon: 'cloud' },
@@ -260,33 +310,9 @@ function TempStep({ cold, setCold, unit, setUnit }: { cold: ColdSensitivity; set
         style={{ marginBottom: space.xl, alignSelf: 'flex-start', width: 160 }}
       />
       <View style={{ gap: space.md }}>
-        {opts.map((o) => {
-          const sel = cold === o.v;
-          return (
-            <Pressable
-              key={o.v}
-              onPress={() => {
-                haptic.tap();
-                setCold(o.v);
-              }}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: sel }}
-              accessibilityLabel={`${o.title}. ${o.body}`}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.lg, borderRadius: radius.lg, backgroundColor: colors.surface, borderWidth: 2, borderColor: sel ? colors.text : colors.border }}
-            >
-              <Icon name={o.icon} size={26} color={colors.sun} />
-              <View style={{ flex: 1 }}>
-                <Text variant="heading">{o.title}</Text>
-                <Text variant="caption" color="textMuted">
-                  {o.body}
-                </Text>
-              </View>
-              <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: sel ? colors.text : colors.borderStrong, alignItems: 'center', justifyContent: 'center' }}>
-                {sel && <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.text }} />}
-              </View>
-            </Pressable>
-          );
-        })}
+        {opts.map((o) => (
+          <RadioCard key={o.v} title={o.title} body={o.body} icon={o.icon} selected={cold === o.v} onPress={() => setCold(o.v)} />
+        ))}
       </View>
     </View>
   );
@@ -326,6 +352,8 @@ function LocationStep({ onDone }: { onDone: () => void }) {
 
 function ClosetStep({ finish }: { finish: (then?: () => void) => void }) {
   const count = useStore((s) => s.items.length);
+  const clothesFor = useStore((s) => s.preferences.clothesFor);
+  const sampleCount = SAMPLE_CLOSET.filter((p) => suitsWardrobe(p.categoryId, clothesFor)).length;
   const go = async (fn: () => Promise<{ uri: string; width: number; height: number }[] | undefined>) => {
     const photos = await fn();
     if (!photos?.length) return;
@@ -343,7 +371,7 @@ function ClosetStep({ finish }: { finish: (then?: () => void) => void }) {
         <OptionCard
           icon="hanger"
           title="Start with a sample closet"
-          body="Explore with 27 example pieces — remove later"
+          body={`Explore with ${sampleCount} example pieces — remove later`}
           onPress={() => {
             if (!count) useStore.getState().loadSamples();
             finish(() => router.replace('/'));

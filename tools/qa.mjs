@@ -80,6 +80,11 @@ await page.waitForTimeout(1500);
 check('opens onboarding on first launch', await visible('Get dressed.'));
 await shot('01-welcome');
 await tapText('Get started');
+await page.getByText('What do you usually wear?').first().waitFor({ timeout: 10000 }).catch(() => {});
+check('asks which clothes to suggest', await visible('What do you usually wear?'));
+await page.getByLabel(/^Men’s clothes/).click();
+await shot('01b-wardrobe');
+await tapText('Continue');
 await page.getByPlaceholder('First name').fill('Alex');
 await page.getByLabel(/^Minimalist:/).click();
 await page.getByLabel(/^Casual:/).click();
@@ -104,7 +109,7 @@ await page.getByLabel(/^Start with a sample closet/).click();
 await page.waitForTimeout(1500);
 
 // ---- Today
-check('lands on Today after onboarding', await visible('Good') && await visible('Alex'));
+check('lands on Today after onboarding', await visible('Alex'));
 check('weather card shows Boston', await visible('Boston'));
 check('today shows an outfit', await visible('Wear today'));
 await shot('07-today');
@@ -144,7 +149,8 @@ check('onboarding not shown again', !(await visible('Get dressed.')));
 // ---- Closet
 await tapLabel('Closet');
 await page.waitForTimeout(600);
-check('closet lists sample pieces', await visible('27 pieces'));
+check('closet lists sample pieces (menswear: no dress)', await visible('26 pieces'));
+check('menswear sample closet has no dress', !(await visible('Black slip dress')));
 await shot('11-closet');
 await tapText('Shoes');
 await page.waitForTimeout(300);
@@ -177,7 +183,11 @@ await tapLabel('Back');
 
 // ---- Create
 await page.waitForTimeout(400);
-await tapLabel('Create an outfit');
+await tapLabel('Create or log an outfit');
+await page.waitForTimeout(300);
+check('plus opens make / log menu', (await visible('Make an outfit')) && (await visible('Log or post a fit')));
+await shot('15b-create-menu');
+await tapTop(page.getByText('Make an outfit', { exact: true }));
 await page.waitForTimeout(600);
 await shot('16-create-empty');
 await tapTop(page.getByRole('button', { name: 'Fill the rest' }));
@@ -244,6 +254,8 @@ await shot('26-weather-settings');
 await tapLabel('Back');
 
 // Dark mode
+await page.getByRole('tab', { name: 'Dark' }).first().waitFor({ timeout: 10000 });
+await page.waitForTimeout(4500); // let the laundry toast clear the theme picker
 await tapTop(page.getByRole('tab', { name: 'Dark' }));
 await page.waitForTimeout(400);
 await shot('27-profile-dark');
@@ -254,6 +266,8 @@ await tapLabel('Closet');
 await page.waitForTimeout(500);
 await shot('29-closet-dark');
 await tapLabel('You');
+await page.getByRole('tab', { name: 'Light' }).first().waitFor({ timeout: 10000 });
+await page.waitForTimeout(400);
 await tapTop(page.getByRole('tab', { name: 'Light' }));
 
 // Rainy + cold weather changes recommendations

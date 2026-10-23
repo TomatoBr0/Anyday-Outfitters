@@ -1,4 +1,4 @@
-import type { Pattern, StyleTag } from '@/types/models';
+import type { ClothesFor, Pattern, StyleTag } from '@/types/models';
 
 type Piece = { categoryId: string; primaryColor: string; secondaryColors?: string[]; pattern?: Pattern };
 
@@ -18,3 +18,15 @@ export const STYLE_EXAMPLES: { tag: StyleTag; blurb: string; pieces: Piece[] }[]
   { tag: 'classic', blurb: 'Timeless pieces that last', pieces: [{ categoryId: 'coat', primaryColor: 'tan' }, { categoryId: 'sweater', primaryColor: 'cream', pattern: 'texture' }, { categoryId: 'jeans', primaryColor: 'denim' }] },
   { tag: 'trend', blurb: 'Whatever’s happening now', pieces: [{ categoryId: 'tshirt', primaryColor: 'lavender' }, { categoryId: 'skirt', primaryColor: 'sage' }, { categoryId: 'sneakers', primaryColor: 'white' }] },
 ];
+
+/** Menswear versions of the examples that use a dress or skirt. */
+const MENSWEAR_PIECES: Partial<Record<StyleTag, Piece[]>> = {
+  formal: [{ categoryId: 'blazer', primaryColor: 'charcoal' }, { categoryId: 'trousers', primaryColor: 'charcoal' }, { categoryId: 'dressshoes', primaryColor: 'black' }],
+  trend: [{ categoryId: 'tshirt', primaryColor: 'lavender' }, { categoryId: 'trousers', primaryColor: 'sage' }, { categoryId: 'sneakers', primaryColor: 'white' }],
+  athletic: [{ categoryId: 'tshirt', primaryColor: 'grey' }, { categoryId: 'shorts', primaryColor: 'black' }, { categoryId: 'athletic', primaryColor: 'white', secondaryColors: ['orange'] }],
+};
+
+export function styleExamplesFor(clothesFor: ClothesFor) {
+  if (clothesFor !== 'mens') return STYLE_EXAMPLES;
+  return STYLE_EXAMPLES.map((ex) => ({ ...ex, pieces: MENSWEAR_PIECES[ex.tag] ?? ex.pieces }));
+}

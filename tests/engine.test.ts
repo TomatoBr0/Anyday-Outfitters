@@ -66,6 +66,20 @@ describe('outfit structure', () => {
     expect(outfits[0].itemIds.sort()).toEqual([dress.id, flats.id].sort());
   });
 
+  it('leaves dresses and skirts out for menswear', () => {
+    const c = basicCloset();
+    const dress = item({ name: 'Dress', categoryId: 'dress', primaryColor: 'black' });
+    const skirt = item({ name: 'Skirt', categoryId: 'skirt', primaryColor: 'navy' });
+    const items = [...list(c), dress, skirt];
+    const { outfits } = generateOutfits(ctx(items, { clothesFor: 'mens' }), { count: 10 });
+    expect(outfits.length).toBeGreaterThan(0);
+    for (const o of outfits) expect(o.itemIds).not.toContain(dress.id);
+    for (const o of outfits) expect(o.itemIds).not.toContain(skirt.id);
+    expect(swapCandidates(outfits[0].itemIds.map((id) => items.find((i) => i.id === id)!), 'bottom', ctx(items, { clothesFor: 'mens' })).map((s) => s.item.id)).not.toContain(skirt.id);
+    const plan = buildPackingList({ items, trip: { startDate: '2026-11-01', endDate: '2026-11-04', activities: ['formalEvent'], laundryAvailable: false, carryOnOnly: false }, forecast: { minC: 10, maxC: 18, rainy: false }, clothesFor: 'mens' });
+    expect(plan.entries.map((e) => e.itemId)).not.toContain(dress.id);
+  });
+
   it('keeps a locked item in every result', () => {
     const c = basicCloset();
     const { outfits } = generateOutfits(ctx(list(c), { lockedItemIds: [c.trousers.id] }), { count: 5 });

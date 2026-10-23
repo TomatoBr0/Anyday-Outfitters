@@ -4,16 +4,17 @@
  * shoes, layers and accessories driven by the destination's weather and the
  * trip's activities.
  */
-import { getCategory } from './categories';
+import { getCategory, suitsWardrobe } from './categories';
 import { getColor, pairHarmony } from './colors';
 import { OCCASION_FORMALITY, bottomWarmthTarget, upperWarmthTarget } from './scoring';
-import type { ClothingItem, CustomCategory, Occasion, PackingEntry, Trip } from '@/types/models';
+import type { ClothesFor, ClothingItem, CustomCategory, Occasion, PackingEntry, Trip } from '@/types/models';
 
 export interface PackingInput {
   items: ClothingItem[];
   trip: Pick<Trip, 'startDate' | 'endDate' | 'activities' | 'laundryAvailable' | 'carryOnOnly'>;
   forecast: { minC: number; maxC: number; rainy: boolean };
   customCategories?: CustomCategory[];
+  clothesFor?: ClothesFor;
   /** Pack dirty items too (the user plans to wash before leaving). */
   includeDirty?: boolean;
 }
@@ -34,7 +35,7 @@ export function buildPackingList(input: PackingInput): PackingPlan {
   const nights = tripNights(trip.startDate, trip.endDate);
   const days = nights + 1;
   const notes: string[] = [];
-  const usable = input.items.filter(
+  const usable = input.items.filter((i) => suitsWardrobe(i.categoryId, input.clothesFor)).filter(
     (i) => i.availability === 'available' && (input.includeDirty || i.clean),
   );
   const slot = (i: ClothingItem) => getCategory(i.categoryId, custom).slot;

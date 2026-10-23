@@ -9,7 +9,7 @@
  *
  * Pure and synchronous — runs offline in a few milliseconds on a phone.
  */
-import { getCategory } from './categories';
+import { getCategory, suitsWardrobe } from './categories';
 import {
   WEIGHTS,
   buildAffinity,
@@ -79,6 +79,7 @@ export function buildPools(ctx: EngineContext): { pools: Pools; issues: EngineIs
   const locked = ctx.items.filter((i) => ctx.lockedItemIds?.includes(i.id));
 
   for (const i of ctx.items) {
+    if (!suitsWardrobe(i.categoryId, ctx.clothesFor) && !ctx.lockedItemIds?.includes(i.id)) continue;
     const s = slotOf(i, ctx);
     all[s].push(i);
     if (ctx.allowUnavailable || isWearable(i)) wearable[s].push(i);

@@ -171,10 +171,11 @@ check('my post persists after reload', await seen('Monday neutrals'));
 // Saved + collections
 await tapTop(page.getByLabel('You', { exact: true }));
 await page.waitForTimeout(300);
+await page.getByText('Saved inspiration', { exact: true }).first().waitFor({ timeout: 10000 });
 await tapTop(page.getByText('Saved inspiration', { exact: true }));
 await page.waitForTimeout(400);
 await page.getByPlaceholder('New collection (e.g. School outfits)').fill('School outfits');
-await tapTop(page.getByRole('button', { name: 'Create' }));
+await tapTop(page.getByRole('button', { name: 'Create', exact: true }));
 await page.waitForTimeout(300);
 check('collection created', await seen('School outfits (0)'));
 await shot('s10-saved');

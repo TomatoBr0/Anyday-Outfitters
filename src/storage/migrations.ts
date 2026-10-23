@@ -4,6 +4,7 @@ import { SCHEMA_VERSION, type AppData, type UserPreferences } from '@/types/mode
 export function defaultPreferences(): UserPreferences {
   return {
     onboarded: false,
+    clothesFor: 'all',
     styles: [],
     fitByGroup: {},
     coldSensitivity: 'neutral',

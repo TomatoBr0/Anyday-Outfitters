@@ -55,7 +55,8 @@ export default function TripDetail() {
     setBusy(true);
     try {
       const forecastSummary = await tripForecast(trip.latitude, trip.longitude, trip.startDate, trip.endDate);
-      const plan = buildPackingList({ items, trip, forecast: forecastSummary, includeDirty: true });
+      const prefs = useStore.getState().preferences;
+      const plan = buildPackingList({ items, trip, forecast: forecastSummary, includeDirty: true, customCategories: prefs.customCategories, clothesFor: prefs.clothesFor });
       const keepCustom = trip.packingList.filter((p) => p.custom && !plan.entries.some((e) => e.label === p.label));
       store.upsertTrip({ ...trip, forecastSummary, packingList: [...plan.entries, ...keepCustom] });
       toast({ message: 'Packing list refreshed', icon: 'refresh' });

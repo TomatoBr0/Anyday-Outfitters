@@ -6,6 +6,7 @@ import { create } from 'zustand';
 
 import { SAMPLE_CLOSET } from '@/data/sampleCloset';
 import { createItem, type NewItemInput } from '@/engine/itemFactory';
+import { suitsWardrobe } from '@/engine/categories';
 import { applyWear, setClean } from '@/engine/laundry';
 import { deleteAllImages, deleteImage } from '@/services/images';
 import { getForecast, type Forecast } from '@/services/weather';
@@ -126,7 +127,8 @@ export const useStore = create<Store>()((set, get) => ({
 
   loadSamples() {
     const existing = new Set(get().items.filter((i) => i.sample).map((i) => i.name));
-    get().addItems(SAMPLE_CLOSET.filter((s) => !existing.has(s.name!)).map((s) => ({ ...s, sample: true })));
+    const clothesFor = get().preferences.clothesFor;
+    get().addItems(SAMPLE_CLOSET.filter((s) => !existing.has(s.name!) && suitsWardrobe(s.categoryId, clothesFor)).map((s) => ({ ...s, sample: true })));
   },
 
   removeSamples() {

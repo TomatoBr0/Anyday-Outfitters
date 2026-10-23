@@ -43,6 +43,7 @@ export function useEngineContext(opts: Opts = {}): EngineContext {
       wearLogs,
       feedback,
       customCategories: prefs.customCategories,
+      clothesFor: prefs.clothesFor,
       repeatWindowDays: prefs.repeatWindowDays,
       lockedItemIds: lockedKey ? lockedKey.split(',') : [],
       excludeSignatures: excludeKey ? excludeKey.split(',') : [],

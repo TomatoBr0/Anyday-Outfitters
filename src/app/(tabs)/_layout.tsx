@@ -1,11 +1,15 @@
 import { BlurView } from 'expo-blur';
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import type { BottomTabBarProps } from 'expo-router/tabs';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon, type IconName } from '@/components/Icon';
+import { OptionCard } from '@/components/OptionCard';
 import { Text } from '@/components/Text';
+import { requireProfile } from '@/features/social/components';
 import { useTheme } from '@/theme/ThemeProvider';
 import { fonts } from '@/theme/tokens';
 import { haptic } from '@/utils/haptics';
@@ -34,6 +38,7 @@ function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
   const { colors, scheme } = useTheme();
   const insets = useSafeAreaInsets();
   const bottom = Math.max(insets.bottom, 10);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <View style={[styles.wrap, { paddingBottom: bottom }]} pointerEvents="box-none">
@@ -56,10 +61,14 @@ function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
             return (
               <Pressable
                 key={route.key}
-                onPress={onPress}
+                onPress={() => {
+                  haptic.tap();
+                  setMenuOpen(true);
+                }}
                 accessibilityRole="button"
-                accessibilityLabel="Create an outfit"
-                accessibilityState={{ selected: focused }}
+                accessibilityLabel="Create or log an outfit"
+                accessibilityHint="Make an outfit, or log or post one"
+                accessibilityState={{ selected: focused, expanded: menuOpen }}
                 style={styles.item}
               >
                 <View style={[styles.create, { backgroundColor: colors.primary }]}>
@@ -86,7 +95,36 @@ function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
           );
         })}
       </View>
+      <CreateMenu
+        visible={menuOpen}
+        bottom={bottom + 66 + 12}
+        onClose={() => setMenuOpen(false)}
+        onMake={() => {
+          setMenuOpen(false);
+          const route = state.routes.find((r) => r.name === 'create');
+          if (route && state.routes[state.index]?.key !== route.key) navigateToTab(route.key);
+        }}
+        onLog={() => {
+          setMenuOpen(false);
+          if (requireProfile()) router.push('/social/compose');
+        }}
+      />
     </View>
+  );
+}
+
+function CreateMenu({ visible, bottom, onClose, onMake, onLog }: { visible: boolean; bottom: number; onClose: () => void; onMake: () => void; onLog: () => void }) {
+  const { colors } = useTheme();
+  return (
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose} statusBarTranslucent>
+      <Animated.View entering={FadeIn.duration(150)} style={StyleSheet.absoluteFill}>
+        <Pressable onPress={onClose} accessibilityRole="button" accessibilityLabel="Close menu" style={[StyleSheet.absoluteFill, { backgroundColor: colors.overlay }]} />
+      </Animated.View>
+      <Animated.View entering={FadeInDown.duration(200)} style={{ position: 'absolute', left: 14, right: 14, bottom, gap: 10 }}>
+        <OptionCard primary icon="sparkles" title="Make an outfit" body="Build a look from your closet" onPress={onMake} />
+        <OptionCard icon="camera" title="Log or post a fit" body="Snap what you’re wearing. Keep it private or share it" onPress={onLog} />
+      </Animated.View>
+    </Modal>
   );
 }
 

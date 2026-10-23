@@ -2,17 +2,23 @@ import { router } from 'expo-router';
 import { View } from 'react-native';
 
 import { Text } from '@/components/Text';
-import { Chip, FieldLabel, NavHeader, Screen, Stepper, TextField } from '@/components/ui';
+import { Chip, FieldLabel, NavHeader, Screen, Segmented, Stepper, TextField } from '@/components/ui';
 import { STYLE_LABELS } from '@/engine/scoring';
 import { FIT_LABELS } from '@/features/closet/labels';
 import { useStore } from '@/state/store';
 import { space } from '@/theme/tokens';
-import type { CategoryGroup, Fit, StyleTag } from '@/types/models';
+import type { CategoryGroup, ClothesFor, Fit, StyleTag } from '@/types/models';
 
 const GROUPS: { g: CategoryGroup; label: string }[] = [
   { g: 'tops', label: 'Tops' },
   { g: 'bottoms', label: 'Bottoms' },
   { g: 'other', label: 'Dresses & sets' },
+];
+
+const CLOTHES_FOR: { value: ClothesFor; label: string }[] = [
+  { value: 'mens', label: 'Men’s' },
+  { value: 'womens', label: 'Women’s' },
+  { value: 'all', label: 'Both' },
 ];
 
 export default function StyleSettings() {
@@ -21,6 +27,12 @@ export default function StyleSettings() {
   return (
     <Screen edges={['top', 'bottom']} header={<NavHeader title="Style & fit" onBack={() => router.back()} />}>
       <TextField label="Name" placeholder="Optional" value={prefs.displayName ?? ''} onChangeText={(t) => set({ displayName: t || undefined })} autoCapitalize="words" />
+
+      <FieldLabel>Clothes to suggest</FieldLabel>
+      <Segmented value={prefs.clothesFor} onChange={(v) => set({ clothesFor: v })} options={CLOTHES_FOR} />
+      <Text variant="caption" color="textMuted" style={{ marginTop: space.sm }}>
+        {prefs.clothesFor === 'mens' ? 'Dresses and skirts are left out of your picks.' : 'Picks can include anything in your closet.'}
+      </Text>
 
       <FieldLabel>Your aesthetics</FieldLabel>
       <Text variant="caption" color="textMuted" style={{ marginBottom: space.md }}>
@@ -32,7 +44,7 @@ export default function StyleSettings() {
         ))}
       </View>
 
-      {GROUPS.map(({ g, label }) => (
+      {GROUPS.map(({ g, label }) => ({ g, label: g === 'other' && prefs.clothesFor === 'mens' ? 'Suits & sets' : label })).map(({ g, label }) => (
         <View key={g}>
           <FieldLabel>{`Preferred fit · ${label}`}</FieldLabel>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>

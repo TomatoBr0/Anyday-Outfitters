@@ -1,4 +1,5 @@
 import type {
+  ClothesFor,
   ClothingItem,
   ColdSensitivity,
   CustomCategory,
@@ -42,6 +43,8 @@ export interface EngineContext {
   wearLogs: WearLog[];
   feedback: FeedbackEntry[];
   customCategories: CustomCategory[];
+  /** Menswear leaves dresses and skirts out. */
+  clothesFor?: ClothesFor;
   repeatWindowDays: number;
   /** Items the user pinned; they will appear in every result. */
   lockedItemIds?: ID[];

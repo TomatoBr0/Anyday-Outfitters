@@ -182,9 +182,13 @@ export interface SavedLocation {
   source: 'device' | 'manual';
 }
 
+/** Which clothes to suggest. Menswear leaves dresses and skirts out of picks. */
+export type ClothesFor = 'mens' | 'womens' | 'all';
+
 export interface UserPreferences {
   onboarded: boolean;
   displayName?: string;
+  clothesFor: ClothesFor;
   styles: StyleTag[];
   fitByGroup: Partial<Record<CategoryGroup, Fit>>;
   coldSensitivity: ColdSensitivity;

@@ -43,6 +43,7 @@ export default function NewTrip() {
         trip: { startDate: start, endDate: end, activities, laundryAvailable: laundry, carryOnOnly: carryOn },
         forecast: forecastSummary,
         customCategories: preferences.customCategories,
+        clothesFor: preferences.clothesFor,
         includeDirty: true,
       });
       const id = useStore.getState().upsertTrip({
